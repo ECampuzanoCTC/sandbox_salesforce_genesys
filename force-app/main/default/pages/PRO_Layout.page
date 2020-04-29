@@ -1,0 +1,5035 @@
+<apex:page applyBodyTag="false" docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="false" controller="PRO_PromocionesCtrl">
+	
+	<!-- CSS -->
+	<!--<link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.Bootstrap, '/css/bootstrap.min.css')}"/>/-->
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.css"/>
+	<link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.FontAwesome, '/fontawesome520/css/all.css')}"/>
+	<link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.AngularJSToast, '/Toast/angular-toastr.css')}"/>
+	<!-- /CSS -->
+	
+	<!-- JS -->
+	<apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-2.2.2.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.AngularJS,'/angular-1.7.2/angular.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.AngularJS,'/angular-1.7.2/angular-animate.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.AngularJS,'/angular-1.7.2/angular-sanitize.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.AngularJS,'/angular-1.7.2/angular-messages.min.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.AngularJSPagination)}" />
+	<apex:includeScript value="{!URLFOR($Resource.AngularJSToast,'/Toast/angular-toastr.js')}" />
+	<apex:includeScript value="{!URLFOR($Resource.uiBootstrap)}" />
+	<apex:includeScript value="{!URLFOR($Resource.CTC_BASE, '/angular/directives/ctc.module.js')}"/>
+	<apex:includeScript value="{!URLFOR($Resource.CTC_BASE, '/angular/directives/number.directive.js')}"/>
+   <!--  <apex:includeScript value="{!URLFOR($Resource.JQuery,'jquery-ui.min.js')}" /> 
+	<apex:includeScript value="{!URLFOR($Resource.Bootstrap,'/js/bootstrap.min.js')}" /> 
+	<apex:includeScript value="{!URLFOR($Resource.FontAwesome,'/fontawesome520/js/all.js')}" /> -->
+	<!-- /JS -->
+
+	<style type="text/css">
+
+		body{
+			font-family: 'Helvetica';
+			font-size: 14px;
+		}
+
+		#cover-spin {
+			position:fixed;
+			width:100%;
+			left:0;right:0;top:0;bottom:0;
+			background-color: rgba(255,255,255,0.7);
+			z-index:9999;
+			display: none;
+		}
+
+		@-webkit-keyframes spin {
+			from {-webkit-transform:rotate(0deg);}
+			to {-webkit-transform:rotate(360deg);}
+		}
+
+		@keyframes spin {
+			from {transform:rotate(0deg);}
+			to {transform:rotate(360deg);}
+		}
+
+		#cover-spin::after {
+			content:'';
+			display:block;
+			position:absolute;
+			left:48%;top:40%;
+			width:40px;height:40px;
+			border-style:solid;
+			border-color:black;
+			border-top-color:transparent;
+			border-width: 4px;
+			border-radius:50%;
+			-webkit-animation: spin .8s linear infinite;
+			animation: spin .8s linear infinite;
+		}
+
+		.tablePromotionTopScrollParent, .tableDIVPromotionTopScroll {
+			overflow-x: scroll;
+			overflow-y: hidden;
+			width: 100%;
+			border: none 0px RED;
+		}
+		.tablePromotionTopScrollChild { 
+			width: 1950px ; 
+			overflow-x: scroll;
+			overflow-y: hidden;
+			height: 10px;
+		}
+
+		.tableAplicarPromotionTopScrollParent, .tableDIVAplicarPromotionTopScroll {
+			overflow-x: scroll;
+			overflow-y: hidden;
+			width: 100%;
+			border: none 0px RED;
+		}
+		.tableAplicarPromotionTopScrollChild { 
+			width: 1950px ; 
+			overflow-x: scroll;
+			overflow-y: hidden;
+			height: 10px;
+		}
+
+		.sinBorde{
+			border: 0px solid #dee2e600 !important;
+		}
+
+		.input-group-addon{
+			height: 30px;
+			padding: 6px 12px;
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 1;
+			color: #555;
+			text-align: center;
+			background-color: #eee;
+			border: 1px solid #ccc;
+			border-top-left-radius: 4px;
+			border-bottom-left-radius: 4px;
+		}
+
+		.inputBuscar{
+			height: 30px;
+		}
+
+		.fondoContPromociones{
+			background-color: #337ab7;
+			color: #ffffff;
+			padding: .2em .6em .3em;
+			font-size: 75%;
+			font-weight: 700;
+			line-height: 1;
+			color: #fff;
+			text-align: center;
+			white-space: nowrap;
+			vertical-align: baseline;
+			border-radius: .25em;
+		}
+
+		.headerSortTableStyle{
+			cursor: pointer;
+			color: #337ab7;
+		}
+		
+		.fecha{
+			width:100px;
+		}
+
+		.modal-backdrop{
+			opacity:0.5 !important;
+		}
+
+		.requiredInput{
+			color: #ff0000;
+		}
+
+		input.ng-invalid.ng-dirty {
+		  border-color: red;
+		}
+		input.ng-valid.ng-dirty {
+		  border-color: green;
+		}
+
+		.paginationCenter{
+			text-align: center;
+		}
+
+		.pagination {
+			display: inline-block;
+			padding-left: 0;
+			margin: 20px 0;
+			border-radius: 4px;
+		}
+
+		.pagination>li {
+			display: inline;
+		}
+
+		.table td, .table th {
+			padding: .75rem;
+			vertical-align: top;
+			border-bottom: 1px solid #dee2e6 !important;
+		}
+
+		ul > li {
+			margin-left: 0;
+		}
+
+		.pagination>li>a, .pagination>li>span {
+			position: relative;
+			float: left;
+			padding: 6px 12px;
+			margin-left: -1px;
+			line-height: 1.42857143;
+			color: #337ab7;
+			text-decoration: none;
+			background-color: #fff;
+			border: 1px solid #ddd;
+		}
+
+		.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {
+			z-index: 3;
+			color: #fff;
+			cursor: default;
+			background-color: #337ab7;
+			border-color: #337ab7;
+		}
+
+		.title{
+			font-size: 30px !important;
+			font-style: bold;
+			padding-top: 20px;
+			padding-bottom: 5px;
+			border-bottom: 1px solid #ccc;
+		}
+
+		.tablePromotionHeaderCenter{
+			text-align: center;
+			color: #fff;
+		}
+
+		.backgroundHeader{
+			background-color: #337ab7;
+			padding: 10px 15px;
+			border-bottom: 1px solid transparent;
+			border-top-left-radius: 3px;
+			border-top-right-radius: 3px;
+		}
+
+		.filterDivision{
+			padding-top: 20px;
+			padding-bottom: 20px;
+			border-bottom: 3px solid #ccc;
+		}
+
+		.promotionDivision{
+			padding-top: 30px;
+		}
+
+		.tablePromotionBorder{
+			border: 2px solid #dee2e6 !important;
+		}
+
+		.filterSelectWidth{
+			width: 203.97px !important;
+		}
+
+		.input-icon-append{
+			display: -ms-flexbox;
+			display: flex;
+			-ms-flex-align: center;
+			align-items: center;
+			padding: .375rem .75rem;
+			margin-bottom: 0;
+			font-size: 1.3rem;
+			font-weight: 400;
+			line-height: 1.5;
+			color: #5dca2a;
+			text-align: center;
+			white-space: nowrap;
+			/* background-color: #e9ecef; */
+			/* border: 1px solid #ced4da; */
+			border-radius: .25rem;
+			cursor: copy;
+		}
+		.rowPromotion {
+			padding-left: 20px !important;
+		}
+
+		.borderPanel{
+			border: 1px solid #ddd;         
+		}
+
+		.paddingTopPanelBody{
+			padding-top: 30px;
+		}
+
+		/* .aplicaPromocionesFontSize{
+			font-size: 10px;
+		} */
+
+		.centrado{
+			text-align: center;
+		}
+
+		.porcentajeDistinto{
+			color:red;
+			font-style: bold;
+		}
+
+		.numberInlineTable{
+			margin-left:auto; 
+			margin-right:auto;          
+		}
+
+		.applyPromotionButtons{
+			width: 80%;
+			font-size: 10px;
+		}
+
+		.applyConceptsButtons{
+			width: 50%;
+			font-size: 10px;
+		}
+
+		.alignSaveButton{
+			margin:0 auto;
+		}
+
+		.sortorder:after {
+		  content: '\25b2'; /* BLACK UP-POINTING TRIANGLE */
+		}
+		.sortorder.reverse:after {
+		  content: '\25bc'; /* BLACK DOWN-POINTING TRIANGLE */
+		}
+
+		.noResultsTableCenter{
+			text-align: center;
+			background-color: #cecaca;
+		}
+
+		.fontSizeOpButton{
+			font-size: 9px;
+		}
+
+		/*Convivencias*/
+		.convivenciasDivContainer{
+			/* margin-left:90px; */
+			margin: 0px 80px;
+		}
+
+		.convivenciasTR{
+			height:35px;margin-bottom:10px;
+		}
+		
+		.convivenciasDisponibleTD{
+			background-color:#ff0000;
+			text-align: center;
+		}
+
+		.convivenciasDisponibleSpan{
+			margin-left:5px;color:white;text-align: center;width:250px;
+		}
+
+		.convivenciasElegidoTD{
+			background-color:#0b9b09;
+			text-align: center;
+		}
+
+		.convivenciasElegidoSpan{
+			margin-left:5px;color:white;width:250px;text-align: center;
+		}
+
+		.convivenciasDisponibleSelect{
+			width:275px;
+		}
+
+		.convivenciasBotones{
+			float:left;
+		}
+		.convivenciasBotonesAncho{
+			width:50px;
+		}
+
+		.convivenciasElegidoSelect{
+			width:275px;
+		}
+
+		.lists {
+		  display: flex;
+		  min-height: 150px;
+		  padding-left: 0px;
+		}
+
+		.anchoTablaConvivencia{
+			width: 275px;
+			background-color: #d8d4d4;
+		}
+
+		.listDisponible:before {
+		  content: attr(title);
+		  display: block;
+		  padding: 10px;
+		  background-color: #ff0000;
+		  font-weight: bold;
+		  margin-bottom: 10px;
+		  text-align: center;
+		  color: #fff;
+		}
+		.listElegido:before {
+		  content: attr(title);
+		  display: block;
+		  padding: 10px;
+		  background-color: #0b9b09;
+		  font-weight: bold;
+		  margin-bottom: 10px;
+		  text-align: center;
+		  color: #fff;
+		}
+
+		.listDisponible {
+		  width: 300px;
+		  border: 1px solid #eeeeee;
+		  padding: 0 0 10px 0;
+		}
+
+		.listElegido {
+		  width: 300px;
+		  border: 1px solid #eeeeee;
+		  padding: 0 0 10px 0;
+		}
+
+		.listDisponible + .listElegido {
+		  border-left: none;
+		}
+
+		.item {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+
+		.item {
+			text-align: center;
+			cursor: pointer;
+			display: block;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			/*height: 100%;*/
+			overflow: hidden;
+		}
+
+		.item:hover {
+		  color: blue;
+		}
+
+		.item-contents {
+		  display: block;
+		  /*width: 200px;
+		  height: 30px;
+		  line-height: 30px;*/
+		  padding: 0 10px;
+		}
+
+		/* Contents are cloned and position transitioned between the lists */
+		/* .item-contents.ng-anchor-out { */
+		  /* No "out" transition: the item moving accross the page is exactly how it
+			 appears in the source location */
+		/* } */
+		
+		.item-contents.ng-anchor-in {
+		  transition: 0.2s linear all;
+		}
+
+		/* The item height is transitioned so space appears/disappears gradually in each list */
+		.item.ng-enter {
+		  transition:0.1s linear all;
+		  height: 0;
+		}
+
+		.item.ng-enter.ng-enter-active {
+		  height: 30px;
+		}
+
+		.item.ng-leave {
+		  transition: 0.1s linear all;
+		  height: 30px;
+		}
+
+		.item.ng-leave.ng-leave-active {
+		  height: 0;
+		}
+		/*Convivencias*/
+
+		/*Extras*/
+		.multiSelectScroll{
+			overflow-x: scroll;
+		}
+
+		.btn-success {
+			color: #fff !important;
+			background-color: #28a745 !important;
+			border-color: #28a745 !important;
+		}
+		.nopadding {
+		   padding: 0 !important;
+		   margin: 0 !important;
+		}
+		
+		.aplicar-promocion-fit-content > .modal-dialog > .modal-content {
+			width: 900px;
+			right: 50px;
+		}
+
+	</style>
+
+	<html>
+		<body id="proLayoutCtrl" ng-app="appIEUPromociones" ng-controller="proLayoutCtrl as pro">
+			<c:PRO_AgregarPromocion ></c:PRO_AgregarPromocion>
+			<c:PRO_AgregarConcepto ></c:PRO_AgregarConcepto>
+			<c:PRO_ConfigurarConvivencias ></c:PRO_ConfigurarConvivencias>
+			<c:PRO_AplicarPromocion ></c:PRO_AplicarPromocion>
+			<c:PRO_BorrarPromocion ></c:PRO_BorrarPromocion>
+			<!-- View -->
+				<div class="container-fluid">
+					<!-- START ********** Title Promociones ********** -->              
+					<div class="col-12">
+						<span class= "title">Promociones</span>
+					</div>
+					<!-- END ********** /Title Promociones ********** -->
+					<div class="col-12">
+						<!-- START ********** Row Filters Section ********** -->
+						<div class="row filterDivision">                    
+							<!-- Filters Container-->
+							<div class="col-12">
+								<!-- Panel Filters -->
+								<div class="panel panel-default">
+									<!-- Panel Filters Body -->
+									<div class="panel-body">
+										<!-- First row Filters -->
+										<div class="row" >
+											<!-- Periodo -->
+											<div class="col">
+												<form >
+													<div class="form-group row">
+														<label for="inlineFormInputPeriod" class="col-sm-2 col-form-label col-form-label-sm">Periodo</label>
+														<div class="col-sm-10">
+
+															<select class="form-control form-control-sm"    
+															ng-options="optionPeriod as optionPeriod.Name for optionPeriod in pro.filterLayout.filterListPeriod"
+															ng-model="pro.filterLayout.filterPeriod"
+															ng-change="pro.getModalityByPeriod(pro.filterLayout.filterPeriod.Id)">
+															</select>
+														</div>
+													</div>                                          
+												</form>
+											</div>
+											<!-- /Periodo -->
+											<!-- Modalidad -->
+											<div class="col">
+												<form >
+													<div class="form-group row">
+														<label for="inlineFormInputModality" class="col-sm-2 col-form-label col-form-label-sm">Modalidad </label>
+														<div class="col-sm-10">
+															<select id="inlineFormInputModality" 
+															class="form-control form-control-sm" 
+															ng-options="optionModality as optionModality.Name for optionModality in pro.filterLayout.filterListModality"
+															ng-model="pro.filterLayout.filterModality" 
+															ng-change="pro.splitPlantelbyModality(pro.filterLayout.filterModality.Name)" />
+														</div>
+													</div>                                          
+												</form>
+											</div>
+											<!-- /Modalidad -->
+											<!-- Letra Beca -->
+											<div class="col">
+												<form >
+													<div class="form-group row">
+														<label for="inlineFormInputPlantel" class="col-sm-2 col-form-label col-form-label-sm">Plantel</label>
+														<div class="col-sm-10">
+															<select id="inlineFormCustomSelectPlantel" 
+															class="form-control form-control-sm multiSelectScroll" 
+															ng-options="optionPlantel as optionPlantel.Name for optionPlantel in pro.filterLayout.filterListViewPlantel"
+															ng-model="pro.filterLayout.filterPlantel" 
+															ng-change="pro.splitNivelbyPlantel(pro.filterLayout.filterPlantel)" 
+															multiple="true"/>
+														</div>                                          
+													</div>                                          
+												</form>
+											</div>
+											<!-- /Letra Beca -->
+										</div>
+										<!-- /First row Filters -->
+										<!-- Second row Filters -->
+										<div class="row">
+											<!-- Plantel -->
+											<div class="col">
+												<form >
+													<div class="form-group row">                                                
+														<label for="inlineFormInputNivel" class="col-sm-2 col-form-label col-form-label-sm">Nivel</label>
+														<div class="col-sm-10">
+															<select id="inlineFormCustomSelectNivel" 
+															class="form-control form-control-sm" 
+															ng-options="optionNivel as optionNivel.Name for optionNivel in pro.filterLayout.filterListViewNivel"
+															ng-model="pro.filterLayout.filterNivel" 
+															ng-change="pro.splitProgramabyNivel(pro.filterLayout.filterNivel)" 
+															multiple="true" />
+														</div>
+
+													</div>                                          
+												</form>
+											</div>
+											<!-- /Plantel -->
+											<!-- Nivel -->
+											<div class="col">
+												<form >
+													<div class="form-group row">
+														<label for="inlineFormInputPrograma" class="col-sm-2 col-form-label col-form-label-sm">Programa</label>
+														<div class="col-sm-10">
+															<select id="inlineFormCustomSelectPrograma" 
+															class="form-control form-control-sm multiSelectScroll" 
+															ng-options="optionPrograma as optionPrograma.Name for optionPrograma in pro.filterLayout.filterListViewProgram"
+															ng-model="pro.filterLayout.filterProgram"
+															ng-change="pro.getPromocionesOfertas()"
+															multiple="true" />
+														</div>
+													</div>                                          
+												</form>
+											</div>
+											<!-- /Nivel -->
+											<!-- Programa -->
+											<div class="col">
+												<form >
+													<div class="form-group row">                                <label for="inlineFormInputLetter" class="col-sm-2 col-form-label col-form-label-sm">Letra Beca</label>
+														<div class="col-sm-10">               
+														  <select id="inlineFormInputLetter" 
+															class="form-control form-control-sm" 
+															ng-options="optionLetraBeca as optionLetraBeca for optionLetraBeca in pro.filterLayout.filterListViewLetraBeca"
+															ng-model="pro.filterLayout.filterLetraBeca"
+															ng-change="pro.getPromocionesOfertas()" 
+															multiple="true"
+															 />
+														</div>
+													</div>                                          
+												</form>
+											</div>
+											<!-- /Programa -->
+										</div>
+										<!-- /Second row Filters -->
+									</div>          
+									<!-- /Panel Filters Body -->                
+								</div>
+								<!-- Panel Filters -->
+							</div>
+							<!-- /Filters Container -->
+						</div>
+						<!-- END ********** /Filters Section ********** -->
+
+						<!-- START ********** Row Promotion Table Section ********** -->
+						<div class="row promotionDivision">
+
+							<!-- Container Promotion Table-->
+							<div class="col-12">
+
+
+								<div id="cover-spin">
+									
+									<!-- <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>                      -->                    
+								</div>
+
+								<!-- Form Search & Add Promotion -->
+									<form class="form-inline">
+
+										<!-- Search Column-->
+										<div class="col">                                      
+											<div class="input-group">
+												<span class="input-group-addon">Buscar</span>
+												<input type="text" 
+												class="form-control mb-2 mr-sm-2 inputBuscar" id="inlineFormSearch" 
+												placeholder="..." 
+												ng-model="pro.searchPromotionText"/>
+												<!-- ngIf: pagination.filtered.length > 0 && pagination.search.length > 0 -->
+											</div>
+											
+											<!-- <button type="submit" class="btn btn-primary mb-2" ng-click="pro.searchPromotion()">Buscar</button> -->
+										</div>
+										<!-- /Search Column-->
+
+										<!-- Add Promotion Column -->
+										<div class="col">
+											<div class="input-group mb-2 mr-sm-2">
+												<div class="input-group-prepend">
+													<div class="input-icon-append" ng-click="pro.openAddPromotionModal()"><i class="fas fa-plus-circle"></i></div>
+												</div>
+												<label class="my-1 mr-2" for="inlineFormInputAgregarPromocion">Agregar Promoción</label>
+											</div>
+										</div>
+										<!-- /Add Promotion Column -->
+
+									</form>
+								<!-- /Form Search & Add Promotion -->
+								<div class="table-responsive tableDIVPromotionTopScroll">
+									<table class="table tablePromotionBorder">
+										<thead>
+											<tr class="sinBorde">
+												<th class="fondoContPromociones">{{pro.promotions.length}} promocion(es)</th>
+												<th colspan="16" class="backgroundHeader tablePromotionHeaderCenter">Promociones Existentes</th>
+												
+											</tr>
+										</thead>
+										<thead>
+											<tr>
+												<th scope="col" 
+												class="headerSortTableStyle" 
+												ng-click="pro.sortByPromotionTable('promocion.Name')">
+													Promoción
+													<span class="sortorder" 
+													ng-show="pro.propertyNamePromotionTable === 'promocion.Name'" ng-class="{reverse: pro.reversePromotionTable}"></span>
+												</th>
+												<th scope="col" 
+												class="headerSortTableStyle" 
+												ng-click="pro.sortByPromotionTable('promocion.Estatus__c')">
+													Estatus
+													<span class="sortorder" 
+													ng-show="pro.propertyNamePromotionTable === 'promocion.Estatus__c'" ng-class="{reverse: pro.reversePromotionTable}"></span>
+												</th>
+												<th scope="col" 
+												class="headerSortTableStyle fecha" 
+												ng-click="pro.sortByPromotionTable('promocion.FechaInicioVigencia__c')">
+													Inicio de Vigencia
+													<span class="sortorder" 
+													ng-show="pro.propertyNamePromotionTable === 'promocion.FechaInicioVigencia__c'" 
+													ng-class="{reverse: pro.reversePromotionTable}"></span>
+												</th>
+												<th scope="col" 
+												class="headerSortTableStyle fecha" 
+												ng-click="pro.sortByPromotionTable('promocion.FechaFinVigencia__c')">
+													Fin de Vigencia
+													<span class="sortorder" 
+													ng-show="pro.propertyNamePromotionTable === 'promocion.FechaFinVigencia__c'" 
+													ng-class="{reverse: pro.reversePromotionTable}"></span>
+												</th>
+												<th scope="col" 
+												class="headerSortTableStyle" 
+												ng-click="pro.sortByPromotionTable('promocion.DLandingPage__c')">
+													Landing Page
+													<span class="sortorder" 
+													ng-show="pro.propertyNamePromotionTable === 'promocion.DLandingPage__c'" 
+													ng-class="{reverse: pro.reversePromotionTable}"></span>
+												</th>
+												<th scope="col" 
+												class="headerSortTableStyle" 
+												ng-click="pro.sortByPromotionTable('promocion.DEjecutivo__c')">
+													Disponible Ejecutivo
+													<span class="sortorder" 
+													ng-show="pro.propertyNamePromotionTable === 'promocion.DEjecutivo__c'" 
+													ng-class="{reverse: pro.reversePromotionTable}"></span>
+												</th>
+												<th scope="col" class="headerSortTableStyle text-center" ng-click="pro.sortByPromotionTable('promocion.NombreConcepto__r.Name')">
+													Concepto
+													<span class="sortorder" 
+														ng-show="pro.propertyNamePromotionTable === 'promocion.NombreConcepto__r.Name'" 
+														ng-class="{reverse: pro.reversePromotionTable}"></span>
+												</th>
+												<th scope="col" class="headerSortTableStyle text-center">
+													Oferta Educativa
+												</th>
+											</tr>
+										</thead>
+									  <tbody>
+										<tr dir-paginate="promotion in pro.promotions| orderBy:pro.propertyNamePromotionTable:pro.reversePromotionTable|filter:pro.searchPromotionText|itemsPerPage:5" pagination-id="promotionTableLayout">
+											<td ng-bind="promotion.promocion.Name"></td>
+											<td ng-bind="promotion.promocion.Estatus__c"></td>  
+											<td ng-bind="promotion.promocion.fechaInicioVigencia"></td>
+											<td ng-bind="promotion.promocion.fechaFinVigencia"></td>
+											<td >
+												<input type="checkbox" 
+												ng-model="promotion.promocion.DisponibleLandingPage__c" ng-disabled="true"/>
+											</td>
+											<td >
+												<input type="checkbox" 
+												ng-model="promotion.promocion.DisponibleEjecutivo__c" ng-disabled="true"/>
+											</td>
+											<td ng-bind="promotion.promocion.NombreConcepto__r.Name"></td>
+											<td >
+												<button ng-click="pro.editPromotionModal(promotion.promocion, promotion.configuradores)">
+													<i class="fas fa-pencil-alt" ></i>
+												</button>
+												<button ng-if="promotion.editable" 
+												ng-click="pro.openDeletePromotion(promotion.promocion)">
+													<i class="fas fa-trash-alt"></i>
+												</button>
+
+											</td>
+
+											<td>
+												<div id="divOfertaEducativa" class="row">
+													<table>
+														<thead>
+															
+														</thead>
+														<tbody>
+															<tr  ng-repeat="configuracion in promotion.configuradores">
+																<td ng-bind="configuracion.Modalidad__r.Name"></td>
+																<td ng-bind="configuracion.Plantel__r.Name"></td>
+																<td ng-bind="configuracion.Nivel__r.Name"></td>
+																<td ng-bind="configuracion.Programa__r.Name"></td>
+																<td ng-bind="configuracion.Letra__c"></td>
+																<td>
+																	<button ng-if="promotion.editable" 
+																		ng-click="pro.opendeleteConfigPromotion(configuracion)">
+																			<i class="fas fa-trash-alt"></i>
+																	</button>
+																</td>
+																<td>
+																	<button type="button" 
+																	class="btn btn-success btn-sm" 
+																	ng-click="pro.openAplicarPromocionModal(configuracion)">Aplicar <br/> promoción
+																	</button>
+																</td>
+																<td >
+																	<button type="button" 
+																	class="btn btn-primary btn-sm" 
+																	ng-click="pro.openConvivenciaPromocionesModal(configuracion,promotion.editable)" 
+																	ng-disabled="configuracion.Promocion__r.sinOferta">Conf.convivencia <br/> de promociones</button>
+																</td>
+																<td >
+																	<button type="button" 
+																	class="btn btn-warning btn-sm" 
+																	ng-click="pro.openConvivenciaDescuentosModal(configuracion,promotion.editable)" 
+																	ng-disabled="configuracion.Promocion__r.sinOferta">Conf.convivencia <br/> de descuentos</button>
+																</td>           
+															</tr>
+														</tbody>
+													</table>
+													
+												</div>
+											</td>
+										</tr>
+										 <tr ng-if="pro.promotions.length == 0">
+												<td colspan="17" class="noResultsTableCenter">No se encontrarón promociones.</td>
+											</tr>
+									  </tbody>
+									</table>
+
+									<div class="col-12 text-center">
+										<dir-pagination-controls
+											pagination-id="promotionTableLayout"
+											max-size="5"
+											direction-links="true"
+											boundary-links="true" >
+										</dir-pagination-controls>
+									</div>
+								</div>                      
+								<!-- /Table Promotions -->  
+
+							</div>
+							<!-- /Container Promotion Table -->
+
+						</div>
+						<!-- END ********** /Row Promotion Table ********** -->
+
+						<br/>
+
+						<!-- START ********** Row Grupo Promo Section ********** -->
+
+						<div class="row promotionDivision">
+
+							<!-- Container Final Table-->
+							<div class="col-12">
+
+								<!-- Form Search & Add Final -->
+								<form class="form-inline">
+
+									<!-- Search Column-->
+									<div class="col">
+
+										<div class="input-group">
+											<span class="input-group-addon">Buscar</span>
+											<input type="text" 
+											class="form-control mb-2 mr-sm-2 inputBuscar" 
+											placeholder="..." 
+											ng-model="pro.searchOfeGrupoPromotion"/>
+
+										</div>
+
+									</div>
+									<!-- /Search Column-->
+
+								</form>                     
+								<!-- /Form Search & Add Promotion -->
+
+								<!-- Table Final -->
+								<div class="table-responsive">
+
+									<table class="table tablePromotionBorder centrado">
+										
+										<thead>
+											<tr>
+												<th class="fondoContPromociones">{{pro.gruposPromocion.DatosFiltrados.length}} grupo(s)</th>
+												<th colspan="9" class="backgroundHeader tablePromotionHeaderCenter">Grupos con Promoción</th>
+											</tr>
+										</thead>
+
+										<thead >
+											<tr>
+												<th scope="col" colspan="5" class="centrado">Oferta Educativa</th>
+												<th scope="col" colspan="2" class="centrado">Grupo</th>
+												<th scope="col" colspan="1" class="centrado">Promoción</th>
+												
+											</tr>
+										</thead>
+										
+										<thead>
+											<tr>
+												<th class="headerSortTableStyle">Periodo</th>
+												<th class="headerSortTableStyle">Modalidad</th>
+												<th class="headerSortTableStyle">Plantel</th>
+												<th class="headerSortTableStyle">Nivel</th>
+												<th class="headerSortTableStyle">Programa</th>
+												<th class="headerSortTableStyle">Clave</th>
+												<th class="headerSortTableStyle">Estatus</th>
+												<th class="headerSortTableStyle">Nombre Promocion</th>
+											</tr>
+										</thead>
+										
+										<tbody>
+											<tr dir-paginate="ofertaEducativa in pro.gruposPromocion.DatosFiltrados | filter:pro.searchOfeGrupoPromotion |itemsPerPage:5" pagination-id="gruposPromocionTableLayout">
+												
+												<td ng-bind="ofertaEducativa.periodo"></td>
+												<td ng-bind="ofertaEducativa.modalidad"></td>
+												<td ng-bind="ofertaEducativa.plantel"></td>
+												<td ng-bind="ofertaEducativa.nivel"></td>
+												<td ng-bind="ofertaEducativa.programa"></td>
+												<td ng-bind="ofertaEducativa.clave"></td>
+												<td ng-bind="ofertaEducativa.estatus"></td>
+												<td >
+													<div style="max-height: 80px; overflow-y: scroll; line-height: 1.15;">
+														<li class="item" 
+														ng-repeat="promotion in ofertaEducativa.promocion" ng-if="ofertaEducativa.promocion">
+															<span ng-click="pro.showGrupoPromoConcepTable(promotion)">{{ promotion.nombrePromocion }}</span>
+														</li>
+													</div>
+												</td>   
+											</tr>
+
+											<tr ng-if="pro.gruposPromocion.DatosFiltrados.length == 0">
+												<td colspan="10" class="noResultsTableCenter">No se encontrarón grupos.</td>
+											</tr>
+
+										</tbody>
+
+									</table>
+
+								</div>
+
+								<div class="paginationCenter">
+
+									<dir-pagination-controls
+										pagination-id="gruposPromocionTableLayout"
+										max-size="5"
+										direction-links="true"
+										boundary-links="true" >
+									</dir-pagination-controls>
+									
+								</div>
+								<!-- /Table Final -->
+
+							</div>
+							<!-- /Container Final Table -->
+
+						</div>
+
+						<!-- END ********** /Row Grupo Promo Section ********** -->
+
+
+						<br/>
+
+						<!-- START ********** /Row Grupo Promo Concepto Section ********** -->
+						<div class="row promotionDivision" ng-if="pro.promocionConcepto.visible">
+
+						<!-- Container Final Table-->
+						<div class="col-12">
+
+							<!-- Table Final -->
+							<div class="table-responsive">
+
+								<table class="table tablePromotionBorder centrado">
+									
+									<thead>
+										<tr>
+											<th colspan="{{pro.promocionConcepto.headerColSpan}}" 
+											class="backgroundHeader tablePromotionHeaderCenter">{{pro.promocionConcepto.nombrePromocion}}</th>
+										</tr>
+									</thead>
+
+									<thead >
+										<tr>
+											<th scope="col" colspan="1" class="centrado">Concepto</th>
+											<th scope="col" colspan="{{pro.promocionConcepto.conceptoPagos.length}}" 
+											class="centrado">Cantidad de Pagos</th>
+											
+										</tr>
+									</thead>
+									
+									<thead>
+										<tr>
+											<th class="headerSortTableStyle">Nombre</th>
+											<th class="headerSortTableStyle" 
+											ng-repeat="pago in pro.promocionConcepto.conceptoPagos">
+												No.{{pago.noPago}}
+											</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr>
+											
+											<td rowspan="2">{{pro.promocionConcepto.concepto}}</td>
+											<td ng-repeat="descuento in pro.promocionConcepto.conceptoPagos">
+												{{descuento.porcentajeDescuento}} %
+											</td>
+												
+										</tr>
+
+									</tbody>
+
+								</table>
+
+							</div>
+			
+							<!-- /Table Final -->
+
+						</div>
+						<!-- /Container Final Table -->
+					</div>
+				</div>
+
+				<!-- END ********** /Row Grupo Promo Concepto Section ********** -->
+
+				<!-- START ********** Row Save Section ********** -->
+
+				<!-- <div class="row">
+					<div class="alignSaveButton">
+						<button type="submit" class="btn btn-success mb-2" ng-click="pro.openModal()">Guardar</button>
+						<button type="submit" class="btn btn-danger mb-2" ng-click="pro.searchPromotion()">Cancelar</button>
+					</div>                  
+				</div> -->
+
+				<!-- END ********** /Row Save Section ********** -->
+
+			</div>
+			<!-- /View -->
+
+			<!-- AngularJS -->
+			<script type="text/javascript">
+
+				/** Initialization of the AngularJS module */
+				var app = angular.module('appIEUPromociones',['ngSanitize','ui.bootstrap','ngMessages','angularUtils.directives.dirPagination','ctc.module','ngAnimate','angularjsToast']);
+
+				app.factory('RequestFactory',function($q,toast){
+
+					var request = {
+						remoteCall: remoteCall,
+						formatDateYYYMMDD: formatDateYYYMMDD,
+						formatDateDDMMYYYY: formatDateDDMMYYYY,
+						toastMessageDanger: toastMessageDanger,
+						toastMessageSuccess: toastMessageSuccess,
+						toastMessageWarning: toastMessageWarning
+
+					};
+
+					return request;
+
+					function remoteCall(...args) {
+
+						console.log('[ REMOTE PROMISE ] >>> args:', args);
+						var deferred = $q.defer();
+						// Constants
+						
+						Visualforce.remoting.Manager.invokeAction(...args, (result, event) => {
+							console.log('remoteCall:',result, ' event:',event);
+							if(result && result.state ){
+									
+								deferred.resolve(result);
+
+							}
+						});
+
+						return deferred.promise;
+					};
+			
+
+					//Format date to apex Type Date
+					function formatDateYYYMMDD(fecha){
+
+						var newFecha = '';
+
+						newFecha += fecha.getFullYear();
+						newFecha += '-';
+						newFecha += fecha.getMonth()+1;
+						newFecha += '-';
+						newFecha += fecha.getDate();
+
+						return newFecha;
+
+					};
+
+					function formatDateDDMMYYYY(fecha){
+
+						var newFecha = '';
+					
+						newFecha += fecha.getDate();
+						newFecha += '-';
+						newFecha += fecha.getMonth()+1;
+						newFecha += '-';
+						newFecha += fecha.getFullYear();                        
+
+						return newFecha;
+
+					};
+
+					function toastMessageDanger(mensaje){
+						toast({
+							duration  : 10000,
+							message   : mensaje,
+							className : 'alert-danger',
+							dismissible: true,
+							position: 'center'
+						});
+					};
+
+					function toastMessageSuccess(mensaje){
+						toast({
+							duration  : 5000,
+							message   : mensaje,
+							className : 'alert-success',
+							dismissible: true,
+							position: 'center'
+						});
+					};
+
+					function toastMessageWarning(mensaje){
+						toast({
+							duration  : 5000,
+							message   : mensaje,
+							className : 'alert-warning',
+							dismissible: true,
+							position: 'center'
+						});
+					};
+
+				});
+
+				/** Initialization of the AngularJS controller */
+				app.controller('proLayoutCtrl',function($scope,$timeout,$uibModal,$filter,RequestFactory,$q,toast){
+
+					/** START Creation of global & control variables */
+						var vm = this;
+						vm.promotions = [];
+						vm.importedeconcepto= [];
+						vm.closeNewPromotionModalCounter = 1;
+						//START-Filters variables
+							vm.filterLayout = {
+
+								filterPeriod : '',
+								filterListPeriod : [],
+								filterModality : '',
+								filterListModality : [],
+								filterLetraBeca : '',
+								filterListViewLetraBeca: [],
+								filterPlantelTodos: false,
+								filterPlantel : [],
+								filterListPlantel : [],
+								filterListViewPlantel : [],
+								filterNivelTodos: false,
+								filterNivel : [],
+								filterListNivel : [],
+								filterExtraNivel: [],
+								filterListViewNivel : [],
+								filterProgramTodos: false,
+								filterProgram : [],
+								filterListProgram : [],
+								filterListViewProgram : [],
+								searchPromotionText : '',
+								filterGrupo : '',
+								filterListGrupos : ''
+
+							};
+
+							vm.filterAddPromotion = {
+
+								filterPeriod : '',
+								filterListPeriod : [],
+								filterModality : '',
+								filterListModality : [],
+								filterLetraBeca : [],
+								filterListViewLetraBeca: [],
+								filterPlantelTodos: false,
+								filterPlantel : [],
+								filterListPlantel : [],
+								filterListViewPlantel : [],
+								filterNivelTodos: false,
+								filterNivel : [],
+								filterListNivel : [],
+								filterListViewNivel : [],
+								filterProgramTodos: false,
+								filterProgram : [],
+								filterListProgram : [],
+								filterListViewProgram : [],
+								searchPromotionText : '',
+								filterGrupo : '',
+								filterListGrupos : ''
+
+							};
+
+						//END-Filters variables
+
+						/*START Assign Promotion*/
+							vm.promocionCreada = {Id: '',status:false};
+							vm.asignarPromocion = {};
+							vm.asignarPromocion.NOEditable = false;
+							vm.promocionToDelete = '';
+							vm.configuradorPromocionOriginial = {};
+							vm.promocionEditable = {
+								jsonPromocion: {},
+								jsonConfigurador: [],
+								configuradorId: ''
+							};
+							vm.inicioVigenciaMSG = '';
+							vm.finVigenciaMSG = '';
+                            vm.periodicidadList = [];
+                            vm.periodicidadList =  JSON.parse('{!periodicidadList}');
+						/*END Assign Promotion*/
+
+						//START Assing Concept
+							vm.catalogoConceptos = [];
+							vm.agregarConcepto = {};
+							vm.conceptos = {};
+						//END Assing Concept
+
+						/*START Convivence Promotions*/
+							vm.convivencia = {};                            
+													
+						/*END Convivence Promotions*/
+
+						/*START aplicar promocion*/ 
+							vm.aplicarPromocion = {};
+							vm.colegiaturaInscripcion = false;
+							vm.noDescuentos = [];
+							vm.noPagosimporte = [];
+							vm.porcentajeTotalDiferente = true;
+							vm.totalPorcentaje = 0;
+							vm.oePromotionsToDelete = [];
+							vm.promoElegida = {};
+							vm.configuradorPromocionId = '';
+							vm.persistirDatos = {
+								pagoUnico: false,
+								pagoDiferido: false,
+								cantidadPagos: 0,
+								editando: false
+							}
+                            console.log('$$$$ persistir Datos primera llamada', vm.persistirDatos);
+						/*END aplicar promocion*/
+
+						/*STAR Grupos con Promocion*/
+							vm.gruposPromocion = {};
+							vm.promocionConcepto = {};
+							vm.promocionConcepto.visible = false;
+						/*END Grupos con Promocion*/
+
+						
+						//START SortBy PromotionTable
+							$scope.propertyNamePromotionTable = 'Name';
+							$scope.reversePromotionTable = true;
+						//END SortBy PromotionTable
+
+						//START SortBy OfeGrupoPromotionTable
+							$scope.propertyOfeGrupoPromotionTable = 'Name';
+							$scope.reverseOfeGrupoPromotionTable = true;
+						//END SortBy OfeGrupoPromotionTable
+
+					/** END Creation of global & control variables */
+
+					/**START Initialization of methods to load Data */
+						vm.getFilterPeriodo = getFilterPeriodo;
+						vm.getModalityByPeriod = getModalityByPeriod;
+						vm.getModalityByPeriodAddPromotion = getModalityByPeriodAddPromotion;
+						vm.getPromociones = getPromociones;
+						vm.sortByPromotionTable = sortByPromotionTable;
+						vm.sortByOfeGrupoPromotionTable = sortByOfeGrupoPromotionTable;
+						vm.openAddPromotionModal = openAddPromotionModal;
+						vm.saveNewPromotionModal = saveNewPromotionModal;
+						vm.inactivatePromotion = inactivatePromotion;
+						vm.closeNewPromotionModal = closeNewPromotionModal;
+						vm.openAddConceptModal = openAddConceptModal;
+						vm.saveNewConceptModal = saveNewConceptModal;
+						vm.closeNewConceptModal = closeNewConceptModal;
+						vm.splitPlantelbyModality = splitPlantelbyModality;
+						vm.splitPlantelbyModalityAddPromotion = splitPlantelbyModalityAddPromotion;
+						vm.splitNivelbyPlantel = splitNivelbyPlantel;
+						vm.splitNivelbyPlantelAddPromotion = splitNivelbyPlantelAddPromotion;
+						vm.splitProgramabyNivel = splitProgramabyNivel;
+						vm.splitProgramabyNivelAddPromotion = splitProgramabyNivelAddPromotion;
+						vm.editPromotionModal = editPromotionModal;
+						vm.deletePromotion = deletePromotion;
+						vm.openDeletePromotion = openDeletePromotion;
+						vm.closeDeletePromotion = closeDeletePromotion;
+						vm.editConceptModal = editConceptModal;
+						vm.opendeleteConfigPromotion = opendeleteConfigPromotion;
+						vm.closedeleteConfigPromotion = closedeleteConfigPromotion;
+						vm.openConvivenciaPromocionesModal = openConvivenciaPromocionesModal;
+						vm.openConvivenciaDescuentosModal = openConvivenciaDescuentosModal;
+						vm.saveConvivenciaPromocionesModal = saveConvivenciaPromocionesModal;
+						vm.closeConvivenciaPromocionesModal = closeConvivenciaPromocionesModal;
+						vm.openAplicarPromocionModal = openAplicarPromocionModal;
+						vm.aceptarDeleteConfigPromotion = aceptarDeleteConfigPromotion;
+						vm.saveAplicarPromocionModal = saveAplicarPromocionModal;
+						vm.closeAplicarPromocionModal = closeAplicarPromocionModal;
+						vm.moveToChoosedList = moveToChoosedList;
+						vm.moveToAvailableList = moveToAvailableList;
+						vm.validarDescuento = validarDescuento;
+						
+						vm.openPaymentsDiscountsPerGroup = openPaymentsDiscountsPerGroup;
+						
+						vm.aplicarATodos = aplicarATodos;
+						vm.aplicarASeleccionados = aplicarASeleccionados;
+						vm.quitarTodos = quitarTodos;
+						vm.quitarSeleccionados = quitarSeleccionados;
+
+						vm.getPromocionesOfertas = getPromocionesOfertas;
+						vm.showGrupoPromoConcepTable = showGrupoPromoConcepTable;
+						vm.openAskToSavePromotion = openAskToSavePromotion;
+						vm.closeAskPromotion = closeAskPromotion;
+						vm.aceptarGuardarPromocion = aceptarGuardarPromocion;
+						vm.tipoConcepto = tipoConcepto;
+						vm.tipoPagoUnico = tipoPagoUnico;
+						vm.tipoPagoDiferido = tipoPagoDiferido;
+						vm.pagosOEConcepto = pagosOEConcepto;
+						vm.verificarFechaFin = verificarFechaFin;
+					/**END Initialization of methods to load Data */
+
+					/*START Init Functions*/
+						getLetrasBeca();
+						getFilterPeriodo();
+						getConceptosPerCatalog();
+					/*END Init Functions*/
+
+					function getLetrasBeca(){
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getLetrasBeca}')
+						.then(result => {
+							
+							if( result.state == 'Success' ) {
+
+								console.log('letras:',result.data);
+
+								vm.filterLayout.filterListViewLetraBeca.push('Todas');
+								vm.filterAddPromotion.filterListViewLetraBeca.push('Todas');
+
+								for( var letra of result.data ){
+									vm.filterLayout.filterListViewLetraBeca.push(letra);
+									vm.filterAddPromotion.filterListViewLetraBeca.push(letra);
+								}
+
+							}/*else if(result.state == 'Exception'){
+
+								RequestFactory.toastMessageDanger(result.response);
+							*/
+							else {
+								RequestFactory.toastMessageWarning('No se encontrarón letras de beca en la configuarición personalizada.');
+							}
+							
+						});
+
+					};
+
+					function getConceptosPerCatalog(){
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getConceptsOfCatalog}')
+						.then(result => {
+							
+							if( result.state == 'Success' ) {
+
+								vm.catalogoConceptos = result.data 
+
+							}else if( result.state == 'Exception' ){
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}else if( result.state == 'Null' ){
+								RequestFactory.toastMessageWarning(result.response);
+							}
+							
+						});
+
+					};
+
+					/*Get Periodos*/
+					function getFilterPeriodo(){
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getPeriodos}')
+						.then(result => {
+							
+							if( result.state == 'Success' ) {
+
+								vm.filterLayout.filterListPeriod = result.data;
+
+								if( vm.filterLayout.filterListPeriod.length > 0 ){
+									
+									vm.filterLayout.filterPeriod = vm.filterLayout.filterListPeriod[0];
+									getModalityByPeriod(vm.filterLayout.filterPeriod.Id);
+									
+								}
+
+							}else if( result.state == 'Exception' ){
+
+								vm.filterLayout.filterListModality = [];                        
+								vm.filterLayout.filterListPlantel = [];
+								vm.filterLayout.filterListNivel = [];
+								vm.filterLayout.filterListProgram = [];
+								vm.filterLayout.validatorPlantel = {};
+								vm.filterLayout.validatorNivel = {};
+								vm.filterLayout.validatorProgram = {};
+								vm.promotions = [];
+								vm.gruposPromocion.OfertaEducativa = [];
+								vm.gruposPromocion.DatosFiltrados = [];
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}else if( result.state == 'Null' ){
+
+								vm.filterLayout.filterListModality = [];                        
+								vm.filterLayout.filterListPlantel = [];
+								vm.filterLayout.filterListNivel = [];
+								vm.filterLayout.filterListProgram = [];
+								vm.filterLayout.validatorPlantel = {};
+								vm.filterLayout.validatorNivel = {};
+								vm.filterLayout.validatorProgram = {};
+								vm.promotions = [];
+								vm.gruposPromocion.OfertaEducativa = [];
+								vm.gruposPromocion.DatosFiltrados = [];
+
+								RequestFactory.toastMessageWarning(result.response);
+							}
+							
+						});                                                                 
+
+					};
+
+					function getModalityByPeriod(periodo){  
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getDataPerPeriod}',periodo)
+						.then(result => {
+							
+							if( result.state == 'Success' ){
+
+								splitFilterData(result.data);
+
+							}else if( result.state == 'Exception' ){
+
+								vm.filterLayout.filterListModality = [];                        
+								vm.filterLayout.filterListPlantel = [];
+								vm.filterLayout.filterListNivel = [];
+								vm.filterLayout.filterListProgram = [];
+								vm.filterLayout.validatorPlantel = {};
+								vm.filterLayout.validatorNivel = {};
+								vm.filterLayout.validatorProgram = {};
+								vm.promotions = [];
+								vm.gruposPromocion.OfertaEducativa = [];
+								vm.gruposPromocion.DatosFiltrados = [];
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}else if( result.state == 'Null' ){
+
+								vm.filterLayout.filterListModality = [];                        
+								vm.filterLayout.filterListPlantel = [];
+								vm.filterLayout.filterListNivel = [];
+								vm.filterLayout.filterListProgram = [];
+								vm.filterLayout.validatorPlantel = {};
+								vm.filterLayout.validatorNivel = {};
+								vm.filterLayout.validatorProgram = {};
+								vm.promotions = [];
+								vm.gruposPromocion.OfertaEducativa = [];
+								vm.gruposPromocion.DatosFiltrados = [];
+
+								RequestFactory.toastMessageWarning(result.response);
+							}                                   
+						});             
+					};
+
+					function getModalityByPeriodAddPromotion(periodo){  
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getDataPerPeriod}',periodo)
+						.then(result => {
+							
+							if( result.state == 'Success' ){
+
+								splitFilterDataEditPromotion(result.data);
+
+							}else if( result.state == 'Exception' ){
+
+								vm.filterAddPromotion.filterListModality = [];                      
+								vm.filterAddPromotion.filterListPlantel = [];
+								vm.filterAddPromotion.filterListNivel = [];
+								vm.filterAddPromotion.filterListProgram = [];
+								vm.filterAddPromotion.validatorPlantel = {};
+								vm.filterAddPromotion.validatorNivel = {};
+								vm.filterAddPromotion.validatorProgram = {};
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}else if( result.state == 'Null' ){
+
+								vm.filterAddPromotion.filterListModality = [];                      
+								vm.filterAddPromotion.filterListPlantel = [];
+								vm.filterAddPromotion.filterListNivel = [];
+								vm.filterAddPromotion.filterListProgram = [];
+								vm.filterAddPromotion.validatorPlantel = {};
+								vm.filterAddPromotion.validatorNivel = {};
+								vm.filterAddPromotion.validatorProgram = {};
+
+								RequestFactory.toastMessageWarning(result.response);
+							}                                   
+						});             
+					};
+
+					/*Saco las modalidades , planteles , niveles, programas */
+					function splitFilterData (objData){
+
+						console.log('splitFilterData:',objData);
+						$timeout(function(){ 
+
+							vm.filterLayout.filterListModality = [];                        
+							vm.filterLayout.filterListPlantel = [];
+							vm.filterLayout.filterListNivel = [];
+							vm.filterLayout.filterListProgram = [];
+							vm.filterLayout.validatorPlantel = {};
+							vm.filterLayout.validatorNivel = {};
+							vm.filterLayout.validatorProgram = {};
+
+							var modalidades = {};
+							var planteles = {};
+							var niveles = {};
+							var programas = {};
+
+							angular.forEach(objData, function(value, key){
+
+								if( value.OfertaEducativa__r ){
+
+									//START Asigno Modalidades
+									if( value.OfertaEducativa__r.Modalidad__r ){
+
+										if( !modalidades.hasOwnProperty(value.OfertaEducativa__r.Modalidad__r.Name) ){
+
+											vm.filterLayout.filterListModality.push({
+												Id: value.OfertaEducativa__r.Modalidad__r.Id, 
+												Name: value.OfertaEducativa__r.Modalidad__r.Name,
+												Periodo: value.OfertaEducativa__r.Periodo__r.Name,
+												PeriodoId: value.OfertaEducativa__r.Periodo__r.Id
+											});
+										}
+
+										modalidades[value.OfertaEducativa__r.Modalidad__r.Name] = value.OfertaEducativa__r.Modalidad__r.Id;
+
+										//START Asigno Plantel
+										if( value.OfertaEducativa__r.Plantel__r ){
+
+											if( !vm.filterLayout.validatorPlantel.hasOwnProperty(value.OfertaEducativa__r.Plantel__r.Name+'-'+value.OfertaEducativa__r.Modalidad__r.Name) ){
+
+												vm.filterLayout.validatorPlantel[value.OfertaEducativa__r.Plantel__r.Name+'-'+value.OfertaEducativa__r.Modalidad__r.Name] = true;
+
+												vm.filterLayout.filterListPlantel.push({
+													Id: value.OfertaEducativa__r.Plantel__r.Id, 
+													Name: value.OfertaEducativa__r.Plantel__r.Name, 
+													Modalidad: value.OfertaEducativa__r.Modalidad__r.Name,
+													ModalidadId: value.OfertaEducativa__r.Modalidad__r.Id,
+													Periodo: value.OfertaEducativa__r.Periodo__r.Name,
+													PeriodoId: value.OfertaEducativa__r.Periodo__r.Id
+												});                                         
+
+											}
+
+											//START Asigno Nivel
+											if( value.OfertaEducativa__r.Nivel__r ){
+
+												if( !vm.filterLayout.validatorNivel.hasOwnProperty(value.OfertaEducativa__r.Nivel__r.Name + '-'+ value.OfertaEducativa__r.Plantel__r.Name) ){
+
+													vm.filterLayout.validatorNivel[value.OfertaEducativa__r.Nivel__r.Name + '-'+ value.OfertaEducativa__r.Plantel__r.Name] = true;
+
+													vm.filterLayout.filterListNivel.push({
+														Id: value.OfertaEducativa__r.Nivel__r.Id, 
+														Name: value.OfertaEducativa__r.Nivel__r.Name, 
+														Plantel: value.OfertaEducativa__r.Plantel__r.Name,
+														PlantelId: value.OfertaEducativa__r.Plantel__r.Id,
+														Modalidad: value.OfertaEducativa__r.Modalidad__r.Name, 
+														ModalidadId: value.OfertaEducativa__r.Modalidad__r.Id,
+														Periodo: value.OfertaEducativa__r.Periodo__r.Name,
+														PeriodoId: value.OfertaEducativa__r.Periodo__r.Id
+													});
+
+												}
+												
+												//START Asigno Programa
+												if( value.OfertaEducativa__r.Programa__r ){
+
+													if( !vm.filterLayout.validatorProgram.hasOwnProperty(value.OfertaEducativa__r.Programa__r.Name + '-'+ value.OfertaEducativa__r.Nivel__r.Name+'-'+value.OfertaEducativa__r.Plantel__r.Name) ){
+
+														vm.filterLayout.validatorProgram[value.OfertaEducativa__r.Programa__r.Name + '-'+ value.OfertaEducativa__r.Nivel__r.Name+'-'+value.OfertaEducativa__r.Plantel__r.Name] = true;
+
+														vm.filterLayout.filterListProgram.push({
+															Id: value.OfertaEducativa__r.Programa__r.Id, 
+															Name: value.OfertaEducativa__r.Programa__r.Name, 
+															Nivel: value.OfertaEducativa__r.Nivel__r.Name, 
+															NivelId: value.OfertaEducativa__r.Nivel__r.Id,
+															Plantel: value.OfertaEducativa__r.Plantel__r.Name,
+															PlantelId: value.OfertaEducativa__r.Plantel__r.Id,
+															Modalidad: value.OfertaEducativa__r.Modalidad__r.Name, 
+															ModalidadId: value.OfertaEducativa__r.Modalidad__r.Id,
+															Periodo: value.OfertaEducativa__r.Periodo__r.Name,
+															PeriodoId: value.OfertaEducativa__r.Periodo__r.Id,
+															OfertaEducativaId: value.OfertaEducativa__r.Id,
+															NumeroColegiaturas: value.OfertaEducativa__r.NumeroColegiaturas__c,
+															NumeroInscripciones: value.OfertaEducativa__r.NumeroInscripciones__c
+														});
+
+													}
+													
+												}
+												//END Asigno Programa
+												
+											}
+											//END Asigno Nivel
+
+										}
+										//END Asigno Plantel
+										
+									}
+									//END Asigno Modalidades
+								}
+
+							});
+						});
+
+						getPromociones();
+						//getGruposPromocion();
+					};
+
+					/*Saco las modalidades , planteles , niveles, programas */
+					function splitFilterDataEditPromotion (objData){
+
+						var deferred = $q.defer();
+
+						$timeout(function(){ 
+
+							vm.filterAddPromotion.filterListModality = [];
+							vm.filterAddPromotion.filterListPlantel = [];
+							vm.filterAddPromotion.filterListNivel = [];
+							vm.filterAddPromotion.filterListProgram = [];
+							vm.filterAddPromotion.validatorPlantel = {};
+							vm.filterAddPromotion.validatorNivel = {};
+							vm.filterAddPromotion.validatorProgram = {};
+
+							var modalidades = {};
+							var planteles = {};
+							var niveles = {};
+							var programas = {};
+
+							angular.forEach(objData, function(value, key){
+
+								if( value.OfertaEducativa__r ){
+
+									//START Asigno Modalidades
+									if( value.OfertaEducativa__r.Modalidad__r ){
+
+										if( !modalidades.hasOwnProperty(value.OfertaEducativa__r.Modalidad__r.Name) ){
+
+											vm.filterAddPromotion.filterListModality.push({
+												Id: value.OfertaEducativa__r.Modalidad__r.Id, 
+												Name: value.OfertaEducativa__r.Modalidad__r.Name,
+												Periodo: value.OfertaEducativa__r.Periodo__r.Name,
+												PeriodoId: value.OfertaEducativa__r.Periodo__r.Id
+											});
+										}
+
+										modalidades[value.OfertaEducativa__r.Modalidad__r.Name] = value.OfertaEducativa__r.Modalidad__r.Id;
+
+										//START Asigno Plantel
+										if( value.OfertaEducativa__r.Plantel__r ){
+
+											if( !vm.filterAddPromotion.validatorPlantel.hasOwnProperty(value.OfertaEducativa__r.Plantel__r.Name+'-'+value.OfertaEducativa__r.Modalidad__r.Name) ){
+
+												vm.filterAddPromotion.validatorPlantel[value.OfertaEducativa__r.Plantel__r.Name+'-'+value.OfertaEducativa__r.Modalidad__r.Name] = true;
+
+												vm.filterAddPromotion.filterListPlantel.push({
+													Id: value.OfertaEducativa__r.Plantel__r.Id, 
+													Name: value.OfertaEducativa__r.Plantel__r.Name, 
+													Modalidad: value.OfertaEducativa__r.Modalidad__r.Name,
+													ModalidadId: value.OfertaEducativa__r.Modalidad__r.Id,
+													Periodo: value.OfertaEducativa__r.Periodo__r.Name,
+													PeriodoId: value.OfertaEducativa__r.Periodo__r.Id
+												});                                         
+
+											}
+
+											//START Asigno Nivel
+											if(value.OfertaEducativa__r.Nivel__r){
+
+												if( !vm.filterAddPromotion.validatorNivel.hasOwnProperty(value.OfertaEducativa__r.Nivel__r.Name + '-'+ value.OfertaEducativa__r.Plantel__r.Name) ){
+
+													vm.filterAddPromotion.validatorNivel[value.OfertaEducativa__r.Nivel__r.Name + '-'+ value.OfertaEducativa__r.Plantel__r.Name] = true;
+
+													vm.filterAddPromotion.filterListNivel.push({
+														Id: value.OfertaEducativa__r.Nivel__r.Id, 
+														Name: value.OfertaEducativa__r.Nivel__r.Name, 
+														Plantel: value.OfertaEducativa__r.Plantel__r.Name,
+														PlantelId: value.OfertaEducativa__r.Plantel__r.Id,
+														Modalidad: value.OfertaEducativa__r.Modalidad__r.Name, 
+														ModalidadId: value.OfertaEducativa__r.Modalidad__r.Id,
+														Periodo: value.OfertaEducativa__r.Periodo__r.Name,
+														PeriodoId: value.OfertaEducativa__r.Periodo__r.Id
+													});
+
+												}
+												
+												//START Asigno Programa
+												if(value.OfertaEducativa__r.Programa__r){
+
+													if( !vm.filterAddPromotion.validatorProgram.hasOwnProperty(value.OfertaEducativa__r.Programa__r.Name + '-'+ value.OfertaEducativa__r.Nivel__r.Name+'-'+value.OfertaEducativa__r.Plantel__r.Name) ){
+
+														vm.filterAddPromotion.validatorProgram[value.OfertaEducativa__r.Programa__r.Name + '-'+ value.OfertaEducativa__r.Nivel__r.Name+'-'+value.OfertaEducativa__r.Plantel__r.Name] = true;
+
+														vm.filterAddPromotion.filterListProgram.push({
+															Id: value.OfertaEducativa__r.Programa__r.Id, 
+															Name: value.OfertaEducativa__r.Programa__r.Name, 
+															Nivel: value.OfertaEducativa__r.Nivel__r.Name, 
+															NivelId: value.OfertaEducativa__r.Nivel__r.Id,
+															Plantel: value.OfertaEducativa__r.Plantel__r.Name,
+															PlantelId: value.OfertaEducativa__r.Plantel__r.Id,
+															Modalidad: value.OfertaEducativa__r.Modalidad__r.Name, 
+															ModalidadId: value.OfertaEducativa__r.Modalidad__r.Id,
+															Periodo: value.OfertaEducativa__r.Periodo__r.Name,
+															PeriodoId: value.OfertaEducativa__r.Periodo__r.Id,
+															OfertaEducativaId: value.OfertaEducativa__r.Id,
+															NumeroColegiaturas: value.OfertaEducativa__r.NumeroColegiaturas__c,
+															NumeroInscripciones: value.OfertaEducativa__r.NumeroInscripciones__c
+														});
+
+													}
+																										
+												}
+												//END Asigno Programa                               
+												
+											}
+											//END Asigno Nivel
+
+										}
+										//END Asigno Plantel
+																					
+									}
+									//END Asigno Modalidades
+								}                           
+
+							});
+
+							deferred.resolve(vm.filterAddPromotion);
+
+						});
+
+						
+						return deferred.promise;
+																
+					};
+
+					//Get Plantel by Modality
+					function splitPlantelbyModality(modalidad){                 
+
+						vm.filterLayout.filterPlantel = [];
+						vm.filterLayout.filterNivel = [];
+						vm.filterLayout.filterProgram = [];
+						vm.filterLayout.filterListViewPlantel = [];
+						vm.filterLayout.filterListViewNivel = [];
+						vm.filterLayout.filterListViewProgram = [];
+						vm.filterLayout.filterListViewPlantel.push({Id: 'todos', Name: 'Todos'});
+
+						angular.forEach(vm.filterLayout.filterListPlantel, function(value, key){
+							
+							if(value.Modalidad === modalidad){
+								vm.filterLayout.filterListViewPlantel.push({Id: value.Id, Name: value.Name, Modalidad: value.Modalidad, Periodo: value.Periodo});
+							}
+
+						});
+
+						getPromociones();
+						//getGruposPromocion();
+
+					};
+
+					//Get Plantel by Modality
+					function splitPlantelbyModalityAddPromotion(modalidad){                 
+						vm.filterAddPromotion.filterPlantel = [];
+						vm.filterAddPromotion.filterNivel = [];
+						vm.filterAddPromotion.filterProgram = [];
+						vm.filterAddPromotion.filterListViewPlantel = [];
+						vm.filterAddPromotion.filterListViewNivel = [];
+						vm.filterAddPromotion.filterListViewProgram = [];
+						vm.filterAddPromotion.filterListViewPlantel.push({Id: 'todos', Name: 'Todos'});
+
+						angular.forEach(vm.filterAddPromotion.filterListPlantel, function(value, key){
+							
+							if(value.Modalidad === modalidad){
+								vm.filterAddPromotion.filterListViewPlantel.push({Id: value.Id, Name: value.Name, Modalidad: value.Modalidad, Periodo: value.Periodo});
+							}
+
+						});
+						
+					};
+
+
+					//Get Nivel by Platenl
+					function splitNivelbyPlantel(plantel){
+
+						console.log('plantel Elegido:',plantel);
+
+						vm.filterLayout.filterNivel = [];
+						vm.filterLayout.filterProgram = [];
+						vm.filterLayout.filterPlantelTodos = false;
+						vm.filterLayout.filterListViewNivel = [];
+						vm.filterLayout.filterListViewProgram = [];
+						vm.filterLayout.filterListViewNivel.push({Id: 'todos', Name: 'Todos'});
+
+						//asigno todos los niveles de todos los planteles
+						if( plantel.length > 0 && plantel[0].Name == 'Todos' ){
+							
+							vm.filterLayout.filterPlantelTodos = true;
+							
+							//Recorro la lista de todos los niveles
+							for(var i = 0; vm.filterLayout.filterListNivel.length > i ; i++){
+
+								//valido si ya esta agregado el nivel a la vista
+								var existNivel = vm.filterLayout.filterListViewNivel.filter(function(nivel) {
+								  return nivel.Name === vm.filterLayout.filterListNivel[i].Name;
+									 
+								});
+
+								//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+								/*var existPlantel = vm.filterLayout.filterListViewPlantel.filter(function(plantel2){
+									return plantel2.Name == vm.filterLayout.filterListNivel[i].Plantel;
+								});*/
+
+								//Si no existe el nivel y el plantel es de la modalidad , se agrega el nivel a la lista 
+								if( (existNivel.length == 0 ) 
+								&& ( vm.filterLayout.filterModality.Name == vm.filterLayout.filterListNivel[i].Modalidad 
+								&& vm.filterLayout.filterPeriod.Name == vm.filterLayout.filterListNivel[i].Periodo) ){
+
+									vm.filterLayout.filterListViewNivel.push({
+										Id: vm.filterLayout.filterListNivel[i].Id, 
+										Name: vm.filterLayout.filterListNivel[i].Name, 
+										Plantel: vm.filterLayout.filterListNivel[i].Plantel, 
+										Modalidad: vm.filterLayout.filterListNivel[i].Modalidad, 
+										Periodo: vm.filterLayout.filterListNivel[i].Periodo});
+								}                                                                                   
+							};
+
+						}else{
+
+							for(var x = 0 ; plantel.length > x ; x++){
+
+								for(var y = 0 ; vm.filterLayout.filterListNivel.length > y ; y++){
+
+									//valido si ya esta agregado el nivel a la vista
+									var existNivel = vm.filterLayout.filterListViewNivel.filter(function(nivel) {
+									  return nivel.Name === vm.filterLayout.filterListNivel[y].Name;
+										 
+									});
+
+									//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+									var existPlantel = vm.filterLayout.filterListViewPlantel.filter(function(plantel2){
+										return plantel2.Name == vm.filterLayout.filterListNivel[y].Plantel;
+									});
+
+									if( existNivel.length == 0 && existPlantel.length > 0 ){
+
+										if( ( plantel[x].Name === vm.filterLayout.filterListNivel[y].Plantel) 
+										&& (plantel[x].Modalidad == vm.filterLayout.filterListNivel[y].Modalidad) 
+										&& ( plantel[x].Periodo 
+										&& vm.filterLayout.filterListNivel[y].Periodo) ){
+
+											vm.filterLayout.filterListViewNivel.push({
+												Id: vm.filterLayout.filterListNivel[y].Id, 
+												Name: vm.filterLayout.filterListNivel[y].Name, 
+												Plantel: vm.filterLayout.filterListNivel[y].Plantel,
+												 Modalidad: vm.filterLayout.filterListNivel[y].Modalidad, 
+												 Periodo: vm.filterLayout.filterListNivel[y].Periodo});
+
+										}
+
+									}
+
+								}
+
+							}
+
+						}
+												
+						getPromociones();
+						//getGruposPromocion();
+
+					};
+
+
+					//Get Nivel by Platenl
+					function splitNivelbyPlantelAddPromotion(plantel){
+
+						console.log('plantel Elegido:',plantel);
+						vm.filterAddPromotion.filterNivel = [];
+						vm.filterAddPromotion.filterProgram = [];
+						vm.filterAddPromotion.filterPlantelTodos = false;
+						vm.filterAddPromotion.filterListViewNivel = [];
+						vm.filterAddPromotion.filterListViewProgram = [];
+						vm.filterAddPromotion.filterListViewNivel.push({Id: 'todos', Name: 'Todos'});
+
+						//asigno todos los niveles de todos los planteles
+						if( plantel.length > 0 && plantel[0].Name == 'Todos' ){
+							
+							vm.filterAddPromotion.filterPlantelTodos = true;
+							
+							//Recorro la lista de todos los niveles
+							for(var i = 0; vm.filterAddPromotion.filterListNivel.length > i ; i++){
+
+								//valido si ya esta agregado el nivel a la vista
+								var existNivel = vm.filterAddPromotion.filterListViewNivel.filter(function(nivel) {
+								  return nivel.Name === vm.filterAddPromotion.filterListNivel[i].Name;
+									 
+								});
+
+								//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+								/*var existPlantel = vm.filterLayout.filterListViewPlantel.filter(function(plantel2){
+									return plantel2.Name == vm.filterLayout.filterListNivel[i].Plantel;
+								});*/
+
+								//Si no existe el nivel y el plantel es de la modalidad , se agrega el nivel a la lista 
+								if( (existNivel.length == 0 ) 
+								&& ( vm.filterAddPromotion.filterModality.Name == vm.filterAddPromotion.filterListNivel[i].Modalidad 
+								&& vm.filterAddPromotion.filterPeriod.Name == vm.filterAddPromotion.filterListNivel[i].Periodo) ){
+
+									vm.filterAddPromotion.filterListViewNivel.push({
+										Id: vm.filterAddPromotion.filterListNivel[i].Id, 
+										Name: vm.filterAddPromotion.filterListNivel[i].Name, 
+										Plantel: vm.filterAddPromotion.filterListNivel[i].Plantel, 
+										Modalidad: vm.filterAddPromotion.filterListNivel[i].Modalidad, 
+										Periodo: vm.filterAddPromotion.filterListNivel[i].Periodo});
+								}                                                                                   
+							};
+
+						}else{
+
+							for(var x = 0 ; plantel.length > x ; x++){
+
+								for(var y = 0 ; vm.filterAddPromotion.filterListNivel.length > y ; y++){
+
+									//valido si ya esta agregado el nivel a la vista
+									var existNivel = vm.filterAddPromotion.filterListViewNivel.filter(function(nivel) {
+									  return nivel.Name === vm.filterAddPromotion.filterListNivel[y].Name;
+										 
+									});
+
+									//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+									var existPlantel = vm.filterAddPromotion.filterListViewPlantel.filter(function(plantel2){
+										return plantel2.Name == vm.filterAddPromotion.filterListNivel[y].Plantel;
+									});
+
+									if( existNivel.length == 0 && existPlantel.length > 0 ){
+
+										if( ( plantel[x].Name === vm.filterAddPromotion.filterListNivel[y].Plantel) 
+										&& (plantel[x].Modalidad == vm.filterAddPromotion.filterListNivel[y].Modalidad) 
+										&& (plantel[x].Periodo && vm.filterAddPromotion.filterListNivel[y].Periodo) ){
+
+											vm.filterAddPromotion.filterListViewNivel.push({
+												Id: vm.filterAddPromotion.filterListNivel[y].Id, 
+												Name: vm.filterAddPromotion.filterListNivel[y].Name, 
+												Plantel: vm.filterAddPromotion.filterListNivel[y].Plantel,
+												 Modalidad: vm.filterAddPromotion.filterListNivel[y].Modalidad, 
+												 Periodo: vm.filterAddPromotion.filterListNivel[y].Periodo});
+
+										}
+
+									}
+
+								}
+
+							}
+
+						}
+
+					};
+
+					//Get Programa by Nivel
+					function splitProgramabyNivel(nivel){
+
+						vm.filterLayout.filterProgram = [];
+						vm.filterLayout.filterListViewProgram = [];
+						vm.filterLayout.filterListViewProgramValidator = {};
+						vm.filterLayout.filterListViewProgram.push({Id: 'todos', Name: 'Todos'});
+
+						var planteles = [];
+
+						if( nivel.length > 0 && nivel[0].Name == 'Todos' ){
+														
+							for(var i = 0; vm.filterLayout.filterListProgram.length > i ; i++){
+
+								//valido si ya esta agregado el programa a la vista          
+								var existPrograma = vm.filterLayout.filterListViewProgram.filter(function(programa) {
+								  return programa.Name === vm.filterLayout.filterListProgram[i].Name;
+									 
+								});
+
+								//valido que solo se agreguen los programas de los niveles de la modalidad elegida
+								var existNivel = vm.filterLayout.filterListViewNivel.filter(function(nivel2){
+									return (nivel2.Name == vm.filterLayout.filterListProgram[i].Nivel && nivel2.Modalidad == vm.filterLayout.filterListProgram[i].Modalidad && nivel2.Periodo == vm.filterLayout.filterListProgram[i].Periodo);
+								});
+
+								var existPlantel = [];
+
+								if( vm.filterLayout.filterPlantel[0].Name != 'Todos' ){
+
+									if( existNivel.length > 0 ){
+
+										existPlantel = vm.filterLayout.filterPlantel.filter(function(nivel3){
+											return (nivel3.Name == vm.filterLayout.filterListProgram[i].Plantel && nivel3.Modalidad == vm.filterLayout.filterListProgram[i].Modalidad && nivel3.Periodo == vm.filterLayout.filterListProgram[i].Periodo);
+										});
+
+									}                                   
+
+								}else{
+
+									existPlantel = vm.filterLayout.filterListViewPlantel.filter(function(nivel3){
+											return (nivel3.Name == vm.filterLayout.filterListProgram[i].Plantel && nivel3.Modalidad == vm.filterLayout.filterListProgram[i].Modalidad && nivel3.Periodo == vm.filterLayout.filterListProgram[i].Periodo);
+										});
+
+								}
+
+
+								//Si no existe el nivel y el plantel es de la modalidad , se agrega el nivel a la lista 
+
+								//for( var n = 0 ; vm.filterLayout.filterNivel.length > n ; n++){
+
+									if( (existPrograma.length == 0 
+									&& existNivel.length > 0 
+									&& existPlantel.length > 0) 
+									&& ( vm.filterLayout.filterModality.Name == vm.filterLayout.filterListProgram[i].Modalidad 
+									&& vm.filterLayout.filterPeriod.Name == vm.filterLayout.filterListProgram[i].Periodo) ){
+								
+										vm.filterLayout.filterListViewProgram.push({
+											Id: vm.filterLayout.filterListProgram[i].Id, 
+											Name: vm.filterLayout.filterListProgram[i].Name,
+											Nivel: vm.filterLayout.filterListProgram[i].Nivel,
+											Plantel: vm.filterLayout.filterListProgram[i].Plantel, 
+											Modalidad: vm.filterLayout.filterListProgram[i].Modalidad,
+											Periodo: vm.filterLayout.filterListProgram[i].Periodo,
+											OfertaEducativa: vm.filterLayout.filterListProgram[i].OfertaEducativaId,
+											Colegiatura: vm.filterLayout.filterListProgram[i].NumeroColegiaturas,
+											Inscripciones: vm.filterLayout.filterListProgram[i].NumeroInscripciones
+										});
+									}
+
+								//}
+
+							};
+
+						}else{
+
+							//for(var x = 0 ; nivel.length > x ; x++){
+
+								for(var y = 0 ; vm.filterLayout.filterListProgram.length > y ; y++){
+
+									//valido si ya esta agregado el nivel a la vista
+									var existPrograma = vm.filterLayout.filterListViewProgram.filter(function(programa) {
+									  return programa.Name === vm.filterLayout.filterListProgram[y].Name;
+										 
+									});
+
+									//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+									var existPlantel = [];
+
+									var existNivel = vm.filterLayout.filterNivel.filter(function(nivel2){
+										return (nivel2.Name == vm.filterLayout.filterListProgram[y].Nivel && nivel2.Modalidad == vm.filterLayout.filterListProgram[y].Modalidad);
+									});
+
+									if( vm.filterLayout.filterPlantel[0].Name != 'Todos' ){
+
+										if( existNivel.length > 0 ){
+
+											existPlantel = vm.filterLayout.filterPlantel.filter(function(nivel3){
+												return (nivel3.Name == vm.filterLayout.filterListProgram[y].Plantel && nivel3.Modalidad == vm.filterLayout.filterListProgram[y].Modalidad && nivel3.Periodo == vm.filterLayout.filterListProgram[y].Periodo);
+											});
+
+										}                                   
+
+									}else{
+
+										existPlantel = vm.filterLayout.filterListViewPlantel.filter(function(nivel3){
+												return (nivel3.Name == vm.filterLayout.filterListProgram[y].Plantel && nivel3.Modalidad == vm.filterLayout.filterListProgram[y].Modalidad && nivel3.Periodo == vm.filterLayout.filterListProgram[y].Periodo);
+											});
+
+									}
+
+									if( (existPrograma.length == 0 
+									&& existNivel.length > 0 
+									&& existPlantel.length > 0) 
+									&& ( vm.filterLayout.filterModality.Name == vm.filterLayout.filterListProgram[y].Modalidad 
+									&& vm.filterLayout.filterPeriod.Name == vm.filterLayout.filterListProgram[y].Periodo) ){
+
+										vm.filterLayout.filterListViewProgram.push({
+											Id: vm.filterLayout.filterListProgram[y].Id, 
+											Name: vm.filterLayout.filterListProgram[y].Name,
+											Nivel: vm.filterLayout.filterListProgram[y].Nivel,
+											Plantel: vm.filterLayout.filterListProgram[y].Plantel, 
+											Modalidad: vm.filterLayout.filterListProgram[y].Modalidad,
+											Periodo: vm.filterLayout.filterListProgram[y].Periodo,
+											OfertaEducativa: vm.filterLayout.filterListProgram[y].OfertaEducativaId,
+											Colegiatura: vm.filterLayout.filterListProgram[y].NumeroColegiaturas,
+											Inscripciones: vm.filterLayout.filterListProgram[y].NumeroInscripciones
+										});
+
+									}
+
+								}
+
+							//}
+
+						}
+
+						getPromociones();
+						//getGruposPromocion();
+
+					};
+
+					//Get Programa by Nivel
+					function splitProgramabyNivelAddPromotion(nivel){
+
+						vm.filterAddPromotion.filterProgram = [];
+						vm.filterAddPromotion.filterListViewProgram = [];
+						vm.filterAddPromotion.filterListViewProgramValidator = {};
+						vm.filterAddPromotion.filterListViewProgram.push({Id: 'todos', Name: 'Todos'});
+
+						var planteles = [];
+
+						if( nivel.length > 0 && nivel[0].Name == 'Todos' ){
+														
+							for(var i = 0; vm.filterAddPromotion.filterListProgram.length > i ; i++){
+
+								//valido si ya esta agregado el programa a la vista          
+								var existPrograma = vm.filterAddPromotion.filterListViewProgram.filter(function(programa) {
+								  return programa.Name === vm.filterAddPromotion.filterListProgram[i].Name;
+									 
+								});
+
+								//valido que solo se agreguen los programas de los niveles de la modalidad elegida
+								var existNivel = vm.filterAddPromotion.filterListViewNivel.filter(function(nivel2){
+									return (nivel2.Name == vm.filterAddPromotion.filterListProgram[i].Nivel && nivel2.Modalidad == vm.filterAddPromotion.filterListProgram[i].Modalidad && nivel2.Periodo == vm.filterAddPromotion.filterListProgram[i].Periodo);
+								});
+
+								var existPlantel = [];
+
+								if( vm.filterAddPromotion.filterPlantel[0].Name != 'Todos' ){
+
+									if( existNivel.length > 0 ){
+
+										existPlantel = vm.filterAddPromotion.filterPlantel.filter(function(nivel3){
+											return (nivel3.Name == vm.filterAddPromotion.filterListProgram[i].Plantel && nivel3.Modalidad == vm.filterAddPromotion.filterListProgram[i].Modalidad && nivel3.Periodo == vm.filterAddPromotion.filterListProgram[i].Periodo);
+										});
+
+									}
+
+								}else{
+
+									existPlantel = vm.filterAddPromotion.filterListViewPlantel.filter(function(nivel3){
+											return (nivel3.Name == vm.filterAddPromotion.filterListProgram[i].Plantel && nivel3.Modalidad == vm.filterAddPromotion.filterListProgram[i].Modalidad && nivel3.Periodo == vm.filterAddPromotion.filterListProgram[i].Periodo);
+										});
+
+								}
+
+
+								//Si no existe el nivel y el plantel es de la modalidad , se agrega el nivel a la lista 
+
+								//for( var n = 0 ; vm.filterLayout.filterNivel.length > n ; n++){
+
+									if( (existPrograma.length == 0 
+									&& existNivel.length > 0 
+									&& existPlantel.length > 0) 
+									&& ( vm.filterAddPromotion.filterModality.Name == vm.filterAddPromotion.filterListProgram[i].Modalidad 
+									&& vm.filterAddPromotion.filterPeriod.Name == vm.filterAddPromotion.filterListProgram[i].Periodo) ){
+								
+										vm.filterAddPromotion.filterListViewProgram.push({
+											Id: vm.filterAddPromotion.filterListProgram[i].Id, 
+											Name: vm.filterAddPromotion.filterListProgram[i].Name,
+											Nivel: vm.filterAddPromotion.filterListProgram[i].Nivel,
+											Plantel: vm.filterAddPromotion.filterListProgram[i].Plantel, 
+											Modalidad: vm.filterAddPromotion.filterListProgram[i].Modalidad,
+											Periodo: vm.filterAddPromotion.filterListProgram[i].Periodo,
+											OfertaEducativa: vm.filterLayout.filterListProgram[i].OfertaEducativaId,
+											Colegiatura: vm.filterLayout.filterListProgram[i].NumeroColegiaturas,
+											Inscripciones: vm.filterLayout.filterListProgram[i].NumeroInscripciones
+										});
+									}
+
+								//}
+
+							};
+
+						}else{
+
+							//for(var x = 0 ; nivel.length > x ; x++){
+
+								for(var y = 0 ; vm.filterAddPromotion.filterListProgram.length > y ; y++){
+
+									//valido si ya esta agregado el nivel a la vista
+									var existPrograma = vm.filterAddPromotion.filterListViewProgram.filter(function(programa) {
+									  return programa.Name === vm.filterAddPromotion.filterListProgram[y].Name;
+										 
+									});
+
+									//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+									var existPlantel = [];
+
+									var existNivel = vm.filterAddPromotion.filterNivel.filter(function(nivel2){
+										return (nivel2.Name == vm.filterAddPromotion.filterListProgram[y].Nivel && nivel2.Modalidad == vm.filterAddPromotion.filterListProgram[y].Modalidad);
+									});
+
+									if( vm.filterAddPromotion.filterPlantel[0].Name != 'Todos' ){
+
+										if( existNivel.length > 0 ){
+
+											existPlantel = vm.filterAddPromotion.filterPlantel.filter(function(nivel3){
+												return (nivel3.Name == vm.filterAddPromotion.filterListProgram[y].Plantel && nivel3.Modalidad == vm.filterAddPromotion.filterListProgram[y].Modalidad && nivel3.Periodo == vm.filterAddPromotion.filterListProgram[y].Periodo);
+											});
+
+										}                                   
+
+									}else{
+
+										existPlantel = vm.filterAddPromotion.filterListViewPlantel.filter(function(nivel3){
+												return (nivel3.Name == vm.filterAddPromotion.filterListProgram[y].Plantel && nivel3.Modalidad == vm.filterAddPromotion.filterListProgram[y].Modalidad && nivel3.Periodo == vm.filterAddPromotion.filterListProgram[y].Periodo);
+											});
+
+									}
+
+									if( (existPrograma.length == 0 
+									&& existNivel.length > 0 
+									&& existPlantel.length > 0) 
+									&& ( vm.filterAddPromotion.filterModality.Name == vm.filterAddPromotion.filterListProgram[y].Modalidad 
+									&& vm.filterAddPromotion.filterPeriod.Name == vm.filterAddPromotion.filterListProgram[y].Periodo) ){
+
+										vm.filterAddPromotion.filterListViewProgram.push({
+											Id: vm.filterAddPromotion.filterListProgram[y].Id, 
+											Name: vm.filterAddPromotion.filterListProgram[y].Name,
+											Nivel: vm.filterAddPromotion.filterListProgram[y].Nivel,
+											Plantel: vm.filterAddPromotion.filterListProgram[y].Plantel, 
+											Modalidad: vm.filterAddPromotion.filterListProgram[y].Modalidad,
+											Periodo: vm.filterAddPromotion.filterListProgram[y].Periodo,
+											OfertaEducativa: vm.filterLayout.filterListProgram[y].OfertaEducativaId,
+											Colegiatura: vm.filterLayout.filterListProgram[y].NumeroColegiaturas,
+											Inscripciones: vm.filterLayout.filterListProgram[y].NumeroInscripciones
+										});
+
+									}
+
+								}
+
+							//}
+
+						}
+
+					};
+
+					//Get Plantel by Modality
+					function splitPlantelbyModalityPromotion(modalidad){
+
+						var deferred = $q.defer();
+						
+						vm.filterAddPromotion.filterListViewPlantel = [];
+						vm.filterAddPromotion.filterListViewPlantel.push({Id: 'todos', Name: 'Todos'});
+
+						angular.forEach(vm.filterAddPromotion.filterListPlantel, function(value, key){
+							
+							if( value.Modalidad === modalidad ){
+								vm.filterAddPromotion.filterListViewPlantel.push({
+									Id: value.Id, 
+									Name: value.Name, 
+									Modalidad: value.Modalidad, 
+									Periodo: value.Periodo});
+							}
+
+						});
+						
+						deferred.resolve(vm.filterAddPromotion);
+
+						return deferred.promise;
+
+					};
+
+					//Get Nivel by Plantel
+					function splitNivelbyPlantelPromotion(plantel){
+
+						var deferred = $q.defer();
+
+						//START
+							console.log('plantel Elegido:',plantel);
+
+						vm.filterAddPromotion.filterPlantelTodos = false;
+						vm.filterAddPromotion.filterListViewNivel = [];
+						vm.filterAddPromotion.filterListViewProgram = [];
+						vm.filterAddPromotion.filterListViewNivel.push({Id: 'todos', Name: 'Todos'});
+
+						//asigno todos los niveles de todos los planteles
+						if( plantel.length > 0 && plantel[0].Name == 'Todos' ){
+							
+							vm.filterAddPromotion.filterPlantelTodos = true;
+							
+							//Recorro la lista de todos los niveles
+							for(var i = 0; vm.filterAddPromotion.filterListNivel.length > i ; i++){
+
+								//valido si ya esta agregado el nivel a la vista
+								var existNivel = vm.filterAddPromotion.filterListViewNivel.filter(function(nivel) {
+								  return nivel.Name === vm.filterAddPromotion.filterListNivel[i].Name;
+									 
+								});
+
+								//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+								/*var existPlantel = vm.filterLayout.filterListViewPlantel.filter(function(plantel2){
+									return plantel2.Name == vm.filterLayout.filterListNivel[i].Plantel;
+								});*/
+
+								//Si no existe el nivel y el plantel es de la modalidad , se agrega el nivel a la lista 
+								if( (existNivel.length == 0 ) 
+								&& ( vm.filterAddPromotion.filterModality.Name == vm.filterAddPromotion.filterListNivel[i].Modalidad 
+								&& vm.filterAddPromotion.filterPeriod.Name == vm.filterAddPromotion.filterListNivel[i].Periodo) ){
+
+									vm.filterAddPromotion.filterListViewNivel.push({
+										Id: vm.filterAddPromotion.filterListNivel[i].Id, 
+										Name: vm.filterAddPromotion.filterListNivel[i].Name, 
+										Plantel: vm.filterAddPromotion.filterListNivel[i].Plantel, 
+										Modalidad: vm.filterAddPromotion.filterListNivel[i].Modalidad, 
+										Periodo: vm.filterAddPromotion.filterListNivel[i].Periodo});
+								}                                                                                   
+							};
+
+						}else{
+
+							for(var x = 0 ; plantel.length > x ; x++){
+
+								for(var y = 0 ; vm.filterAddPromotion.filterListNivel.length > y ; y++){
+
+									//valido si ya esta agregado el nivel a la vista
+									var existNivel = vm.filterAddPromotion.filterListViewNivel.filter(function(nivel) {
+									  return nivel.Name === vm.filterAddPromotion.filterListNivel[y].Name;
+										 
+									});
+
+									//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+									var existPlantel = vm.filterAddPromotion.filterListViewPlantel.filter(function(plantel2){
+										return plantel2.Name == vm.filterAddPromotion.filterListNivel[y].Plantel;
+									});
+
+									if( existNivel.length == 0 && existPlantel.length > 0 ){
+
+										if( ( plantel[x].Name === vm.filterAddPromotion.filterListNivel[y].Plantel) 
+										&& (plantel[x].Modalidad == vm.filterAddPromotion.filterListNivel[y].Modalidad) 
+										&& (plantel[x].Periodo && vm.filterAddPromotion.filterListNivel[y].Periodo) ){
+
+											vm.filterAddPromotion.filterListViewNivel.push({
+												Id: vm.filterAddPromotion.filterListNivel[y].Id, 
+												Name: vm.filterAddPromotion.filterListNivel[y].Name, 
+												Plantel: vm.filterAddPromotion.filterListNivel[y].Plantel,
+												 Modalidad: vm.filterAddPromotion.filterListNivel[y].Modalidad, 
+												 Periodo: vm.filterAddPromotion.filterListNivel[y].Periodo});
+
+										}
+
+									}
+
+								}
+
+							}
+
+						}
+						//END
+										
+						deferred.resolve(vm.filterAddPromotion);
+
+						return deferred.promise;
+
+					};
+
+					//Get Programa by Nivel
+					function splitProgramabyNivelPromotion(nivel){
+
+						var deferred = $q.defer();
+
+						/*vm.filterAddPromotion.filterListViewProgram = [];
+						vm.filterAddPromotion.filterListViewProgram.push({Id: 'todos', Name: 'Todos'});
+
+						for( var nivel of niveles ){
+
+							for( var programa of vm.filterAddPromotion.filterListProgram ){
+
+								if(programa.Nivel === nivel.Name){
+
+									vm.filterAddPromotion.filterListViewProgram.push({
+										Id: programa.Id, 
+										Name: programa.Name,
+										Nivel: programa.Nivel,
+										Plantel: programa.Plantel,
+										Modalidad: programa.Modalidad,
+										Periodo: programa.Periodo
+									});
+
+								}
+
+							}
+
+						}*/
+
+						//START
+						vm.filterAddPromotion.filterListViewProgram = [];
+						vm.filterAddPromotion.filterListViewProgramValidator = {};
+						vm.filterAddPromotion.filterListViewProgram.push({Id: 'todos', Name: 'Todos'});
+
+						var planteles = [];
+						if( nivel.length > 0 && nivel[0].Name == 'Todos' ){
+														
+							for( var i = 0; vm.filterAddPromotion.filterListProgram.length > i ; i++ ){
+
+								//valido si ya esta agregado el programa a la vista          
+								var existPrograma = vm.filterAddPromotion.filterListViewProgram.filter(function(programa) {
+								  return programa.Name === vm.filterAddPromotion.filterListProgram[i].Name;
+									 
+								});
+
+								//valido que solo se agreguen los programas de los niveles de la modalidad elegida
+								var existNivel = vm.filterAddPromotion.filterListViewNivel.filter(function(nivel2){
+									return (nivel2.Name == vm.filterAddPromotion.filterListProgram[i].Nivel && nivel2.Modalidad == vm.filterAddPromotion.filterListProgram[i].Modalidad && nivel2.Periodo == vm.filterAddPromotion.filterListProgram[i].Periodo);
+								});
+
+								var existPlantel = [];
+
+								if( vm.filterAddPromotion.filterPlantel[0].Name != 'Todos' ){
+
+									if( existNivel.length > 0 ){
+
+										existPlantel = vm.filterAddPromotion.filterPlantel.filter(function(nivel3){
+											return (nivel3.Name == vm.filterAddPromotion.filterListProgram[i].Plantel && nivel3.Modalidad == vm.filterAddPromotion.filterListProgram[i].Modalidad && nivel3.Periodo == vm.filterAddPromotion.filterListProgram[i].Periodo);
+										});
+
+									}                                   
+
+								}else{
+
+									existPlantel = vm.filterAddPromotion.filterListViewPlantel.filter(function(nivel3){
+											return (nivel3.Name == vm.filterAddPromotion.filterListProgram[i].Plantel && nivel3.Modalidad == vm.filterAddPromotion.filterListProgram[i].Modalidad && nivel3.Periodo == vm.filterAddPromotion.filterListProgram[i].Periodo);
+										});
+
+								}
+
+
+								//Si no existe el nivel y el plantel es de la modalidad , se agrega el nivel a la lista 
+
+								//for( var n = 0 ; vm.filterLayout.filterNivel.length > n ; n++){
+
+									if( (existPrograma.length == 0 
+									&& existNivel.length > 0 
+									&& existPlantel.length > 0) 
+									&& ( vm.filterAddPromotion.filterModality.Name == vm.filterAddPromotion.filterListProgram[i].Modalidad 
+									&& vm.filterAddPromotion.filterPeriod.Name == vm.filterAddPromotion.filterListProgram[i].Periodo) ){
+								
+										vm.filterAddPromotion.filterListViewProgram.push({
+											Id: vm.filterAddPromotion.filterListProgram[i].Id, 
+											Name: vm.filterAddPromotion.filterListProgram[i].Name,
+											Nivel: vm.filterAddPromotion.filterListProgram[i].Nivel,
+											Plantel: vm.filterAddPromotion.filterListProgram[i].Plantel, 
+											Modalidad: vm.filterAddPromotion.filterListProgram[i].Modalidad,
+											Periodo: vm.filterAddPromotion.filterListProgram[i].Periodo,
+											OfertaEducativa: vm.filterLayout.filterListProgram[i].OfertaEducativaId,
+											Colegiatura: vm.filterLayout.filterListProgram[i].NumeroColegiaturas,
+											Inscripciones: vm.filterLayout.filterListProgram[i].NumeroInscripciones
+										});
+									}
+
+								//}
+
+							};
+
+						}else{
+
+							//for(var x = 0 ; nivel.length > x ; x++){
+
+								for(var y = 0 ; vm.filterAddPromotion.filterListProgram.length > y ; y++){
+
+									//valido si ya esta agregado el nivel a la vista
+									var existPrograma = vm.filterAddPromotion.filterListViewProgram.filter(function(programa) {
+									  return programa.Name === vm.filterAddPromotion.filterListProgram[y].Name;
+										 
+									});
+
+									//valido que solo se agreguen los niveles de los planteles de la modalidad elegida
+									var existPlantel = [];
+
+									var existNivel = vm.filterAddPromotion.filterNivel.filter(function(nivel2){
+										return (nivel2.Name == vm.filterAddPromotion.filterListProgram[y].Nivel && nivel2.Modalidad == vm.filterAddPromotion.filterListProgram[y].Modalidad);
+									});
+
+									if( vm.filterAddPromotion.filterPlantel[0].Name != 'Todos' ){
+
+										if( existNivel.length > 0 ){
+
+											existPlantel = vm.filterAddPromotion.filterPlantel.filter(function(nivel3){
+												return (nivel3.Name == vm.filterAddPromotion.filterListProgram[y].Plantel && nivel3.Modalidad == vm.filterAddPromotion.filterListProgram[y].Modalidad && nivel3.Periodo == vm.filterAddPromotion.filterListProgram[y].Periodo);
+											});
+
+										}                                   
+
+									}else{
+
+										existPlantel = vm.filterAddPromotion.filterListViewPlantel.filter(function(nivel3){
+												return (nivel3.Name == vm.filterAddPromotion.filterListProgram[y].Plantel && nivel3.Modalidad == vm.filterAddPromotion.filterListProgram[y].Modalidad && nivel3.Periodo == vm.filterAddPromotion.filterListProgram[y].Periodo);
+											});
+
+									}
+
+									if( (existPrograma.length == 0 
+									&& existNivel.length > 0 
+									&& existPlantel.length > 0) 
+									&& ( vm.filterAddPromotion.filterModality.Name == vm.filterAddPromotion.filterListProgram[y].Modalidad 
+									&& vm.filterAddPromotion.filterPeriod.Name == vm.filterAddPromotion.filterListProgram[y].Periodo) ){
+
+										vm.filterAddPromotion.filterListViewProgram.push({
+											Id: vm.filterAddPromotion.filterListProgram[y].Id, 
+											Name: vm.filterAddPromotion.filterListProgram[y].Name,
+											Nivel: vm.filterAddPromotion.filterListProgram[y].Nivel,
+											Plantel: vm.filterAddPromotion.filterListProgram[y].Plantel, 
+											Modalidad: vm.filterAddPromotion.filterListProgram[y].Modalidad,
+											Periodo: vm.filterAddPromotion.filterListProgram[y].Periodo,
+											OfertaEducativa: vm.filterLayout.filterListProgram[y].OfertaEducativaId,
+											Colegiatura: vm.filterLayout.filterListProgram[y].NumeroColegiaturas,
+											Inscripciones: vm.filterLayout.filterListProgram[y].NumeroInscripciones
+										});
+
+									}
+
+								}
+
+							//}
+
+						}
+
+						//END
+						
+						deferred.resolve(vm.filterAddPromotion);
+
+						return deferred.promise;
+
+					};
+
+					function getFilters(tipo){
+
+						var filtro = (tipo == 'Layout') ? vm.filterLayout : vm.filterAddPromotion;
+
+						var promocion = {
+							filterPeriod: '',
+							filterModality: '',
+							filterPlantel: [],
+							filterNivel: [],
+							filterProgram: [],
+							filterLetraBeca: []
+						}; 
+
+						if(filtro){
+
+							promocion.filterPeriod = (filtro.filterPeriod && filtro.filterPeriod.Name) ? filtro.filterPeriod.Name : '' ;
+						
+							promocion.filterModality = (filtro.filterModality && filtro.filterModality.Name) ? filtro.filterModality.Name : '';
+
+							if( filtro.filterPlantel && filtro.filterPlantel.length > 0 ){
+
+								if( filtro.filterPlantel[0].Name == 'Todos' ){
+
+									for ( var plantel of filtro.filterListPlantel ){
+
+										if( plantel.Name != 'Todos' 
+										&& plantel.Modalidad == promocion.filterModality ){
+
+											promocion.filterPlantel.push(plantel.Name);
+
+										}
+
+									}
+
+								}else{
+
+									for( var plantel of filtro.filterPlantel){
+
+										if( plantel.Modalidad == promocion.filterModality){
+
+											promocion.filterPlantel.push(plantel.Name);
+
+										}
+
+									}
+
+								}
+
+							}
+
+							if( filtro.filterNivel && filtro.filterNivel.length > 0 ){
+
+								if( filtro.filterNivel[0].Name == 'Todos' ){
+
+									for( var nivel of filtro.filterListNivel){
+
+										if( (promocion.filterPlantel.indexOf(nivel.Plantel) != -1) 
+										&& (nivel.Modalidad == promocion.filterModality) 
+										&& (promocion.filterNivel.indexOf(nivel.Name) == -1) ){
+
+											promocion.filterNivel.push(nivel.Name);
+
+										}
+
+									}
+
+								}else{
+
+									for( var nivel of filtro.filterNivel){
+
+										if( (promocion.filterPlantel.indexOf(nivel.Plantel) != -1) 
+										&& (nivel.Modalidad == promocion.filterModality) 
+										&& (promocion.filterNivel.indexOf(nivel.Name) == -1) ){
+
+											promocion.filterNivel.push(nivel.Name);
+
+										}
+
+									}
+
+								}
+
+							}
+
+							if( filtro.filterProgram && filtro.filterProgram.length > 0 ){
+
+								if( filtro.filterProgram[0].Name == 'Todos' ){
+
+									for( var programa of filtro.filterListProgram ){
+
+										if( (programa.Modalidad == promocion.filterModality) 
+										&& (promocion.filterPlantel.indexOf(programa.Plantel) != -1) 
+										&& (promocion.filterNivel.indexOf(programa.Nivel) != -1) 
+										&& (promocion.filterProgram.indexOf(programa.Name) == -1) ){
+
+											promocion.filterProgram.push(programa.Name);
+
+										}
+
+									}
+
+								}else{
+
+									for( var programa of filtro.filterProgram){
+
+										if( (programa.Modalidad == promocion.filterModality) 
+										&& (promocion.filterPlantel.indexOf(programa.Plantel) != -1) 
+										&& (promocion.filterNivel.indexOf(programa.Nivel) != -1) 
+										&& (promocion.filterProgram.indexOf(programa.Name) == -1) ){
+
+											promocion.filterProgram.push(programa.Name);
+
+										}
+
+									}
+
+								}
+
+							}
+
+							if( filtro.filterLetraBeca 
+							&& filtro.filterLetraBeca.length > 0 ){
+
+								console.log('filterLetraBeca:',filtro.filterLetraBeca,' length:',filtro.filterLetraBeca.length);
+
+								if( filtro.filterLetraBeca.indexOf('Todas') != -1 ){
+
+									for( var letra of filtro.filterListViewLetraBeca ){
+
+										if( letra != 'Todas' ){
+
+											promocion.filterLetraBeca.push(letra);
+
+										}
+
+									}
+
+								}else{
+
+									for( var letra of filtro.filterLetraBeca){
+
+										if( letra != 'Todas' ){
+
+											promocion.filterLetraBeca.push(letra);
+
+										}
+
+									}
+
+								}
+
+							}
+
+						}
+																															
+						console.log('filtro:',filtro);
+						console.log('promocion.filterPeriod:',promocion.filterPeriod);
+						console.log('promocion.filterModality:',promocion.filterModality);
+						console.log('promocion.filterPlantel:',promocion.filterPlantel);
+						console.log('promocion.filterNivel:',promocion.filterNivel);
+						console.log('promocion.filterProgram:',promocion.filterProgram);
+						console.log('promocion.filterLetraBeca:',promocion.filterLetraBeca);
+
+						return promocion;                       
+
+					};
+
+					function getPromocionesOfertas(){
+
+						getPromociones();
+						//getGruposPromocion();
+
+					};
+
+					/*Get Promotions*/
+					function getPromociones(){
+
+						$timeout(function(){ 
+														
+							vm.promotions = [];
+
+							var promocion = getFilters('Layout');
+
+							if( promocion.filterPeriod 
+							&& promocion.filterPeriod != undefined 
+							&& promocion.filterPeriod != '' ){
+
+								$('#cover-spin').show();
+							 
+								RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getPromociones}',
+								promocion.filterPeriod,
+								promocion.filterModality,
+								promocion.filterPlantel,
+								promocion.filterNivel,
+								promocion.filterProgram,
+								promocion.filterLetraBeca).then(result => {
+
+									if( result.state == 'Success' ) {
+
+										console.log('ListaPromociones:',result.data);
+										console.log('MapaPromociones:',result.dataPromoConfiguradores);
+										//RJP-> Verificar esta linea
+										vm.promotions = [];
+										console.log('vm.promotions1::',vm.promotions);
+
+										if( result.data.length > 0 ){
+
+											for( var objPromociones of result.dataPromoConfiguradores ){
+												var promoTemp = {};
+												angular.copy(objPromociones, promoTemp);
+												promoTemp.editable = false;
+												promoTemp.editable = objPromociones.editable;
+												promoTemp.promocion.isGranted = !objPromociones.editable;
+												vm.promotions.push(promoTemp);
+											}
+											console.log('vm.promotions2::',vm.promotions);
+
+											for( var promotion of vm.promotions ){
+
+												if(promotion.promocion.FechaInicioVigencia__c){
+
+													promotion.promocion.fechaInicioVigencia = new Date(promotion.promocion.FechaInicioVigencia__c);
+													
+													promotion.promocion.fechaInicioVigencia.setDate(promotion.promocion.fechaInicioVigencia.getDate() + 1);
+
+													promotion.promocion.fechaInicioVigencia = RequestFactory.formatDateDDMMYYYY(promotion.promocion.fechaInicioVigencia);
+													
+												}
+												
+												if(promotion.promocion.FechaFinVigencia__c){
+
+													promotion.promocion.fechaFinVigencia = new Date(promotion.promocion.FechaFinVigencia__c);
+													
+													promotion.promocion.fechaFinVigencia.setDate(promotion.promocion.fechaFinVigencia.getDate() + 1);
+
+													promotion.promocion.fechaFinVigencia = RequestFactory.formatDateDDMMYYYY(promotion.promocion.fechaFinVigencia);
+													
+												}
+
+											}
+
+										}   
+
+										$('#cover-spin').hide();                                                                    
+									}else if( result.state == 'Exception' ){
+
+										$('#cover-spin').show();
+										RequestFactory.toastMessageDanger(result.response);
+
+									}else if( result.state == 'Null' ){
+										$('#cover-spin').hide();
+									}
+
+								});
+
+							}
+
+						});
+
+					};
+
+					/*Get Grupos Promociones*/
+					function getGruposPromocion(){
+
+						var promocion = getFilters('Layout');
+
+						//OfertasEducativas
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getGruposPromocion}',
+							promocion.filterPeriod,
+							promocion.filterModality,
+							promocion.filterPlantel,
+							promocion.filterNivel,
+							promocion.filterProgram).then(result => {
+
+							if( result.state == 'Success' ){
+								
+								vm.gruposPromocion.OfertaEducativa = [];
+								vm.gruposPromocion.OfertaEducativa = result.data;
+								console.log('getGruposPromocion:',vm.gruposPromocion.OfertaEducativa);
+
+								vm.gruposPromocion.DatosFiltrados = [];
+
+								angular.forEach(Object.keys(vm.gruposPromocion.OfertaEducativa), function(value, key){
+
+									angular.forEach(vm.gruposPromocion.OfertaEducativa[value], function(valueData, keyData){
+
+										angular.forEach(valueData, function(valueGP, keyGP){
+											
+											vm.gruposPromocion.DatosFiltrados.push(valueGP);
+
+										});                                                                             
+									});
+									
+								});
+
+							}else if( result.state == 'Exception' ){
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}else if( result.state == 'Null' ){
+								
+							}
+
+						});
+					};
+
+					function verificarFechaFin(addPromotionForm){
+						const FUNC_NAME = 'verificarFechaFin() | ';
+						if( ( vm.asignarPromocion.fechaInicioVigencia 
+						&& vm.asignarPromocion.fechaInicioVigencia != undefined ) 
+						&& ( vm.asignarPromocion.fechaFinVigencia  
+						&& vm.asignarPromocion.fechaFinVigencia  != undefined) ){
+							
+							if (vm.asignarPromocion.fechaInicioVigencia < vm.asignarPromocion.fechaFinVigencia) {
+								addPromotionForm.inicioVigencia.$setValidity('inicioVigencia', true);
+								vm.inicioVigenciaMSG = '';
+							} else {
+								addPromotionForm.inicioVigencia.$setValidity('inicioVigencia', false);
+								vm.inicioVigenciaMSG = 'No puede ser mayor ó igual a la Fecha Fin de Vigencia';
+							}
+							
+							// if( vm.asignarPromocion.fechaFinVigencia >= vm.asignarPromocion.fechaInicioVigencia 
+							// && vm.finVigenciaMSG == 'No puede ser menor ó igual a la fecha inicial.') {
+							if (vm.asignarPromocion.fechaFinVigencia > vm.asignarPromocion.fechaInicioVigencia) {
+								addPromotionForm.finVigencia.$setValidity('finVigencia', true);
+								vm.finVigenciaMSG = '';
+							} else {
+								addPromotionForm.finVigencia.$setValidity('finVigencia', false);
+								vm.finVigenciaMSG = 'No puede ser menor ó igual a la Fecha Inicio de Vigencia';
+							}
+							
+							console.log(FUNC_NAME + 'vm.asignarPromocion:', vm.asignarPromocion);
+							console.log(FUNC_NAME + 'vm.asignarPromocion.fechaFinVigencia:', vm.asignarPromocion.fechaFinVigencia);
+							
+							// if( vm.asignarPromocion.fechaFinVigencia < new Date() 
+							// && vm.asignarPromocion.estatusOriginal == 'Activo' ){
+							// 	console.log(FUNC_NAME + 'Entré');
+							// 	vm.asignarPromocion.estatus = 'Inactivo';
+							// }
+
+							// if( vm.asignarPromocion.fechaFinVigencia > new Date() 
+							// && vm.asignarPromocion.estatusOriginal == 'Activo' ){
+							// 	vm.asignarPromocion.estatus = 'Activo';
+							// }
+							
+							let fechaFinReal = vm.filterLayout.filterListPeriod[0].FechaFin__c + 21600000;
+							// let tempPFI = new Date(vm.filterLayout.filterListPeriod[0].FechaFin__c);
+							// tempPFI.setHours(tempPFI.getHours() + 6);
+							// tempPFI = new Date(tempPFI.getFullYear() + '-' + tempPFI.getMonth() + '-' + tempPFI.getDate());
+							// let fechaFinReal = tempPFI.valueOf();
+							// console.log('fechaFinReal:', fechaFinReal, 'vm.asignarPromocion.fechaFinVigencia.valueOf():', vm.asignarPromocion.fechaFinVigencia.valueOf());
+							if (vm.asignarPromocion.fechaFinVigencia > fechaFinReal) {
+								addPromotionForm.finVigencia.$setValidity('finVigencia',false);
+								vm.finVigenciaMSG = 'La Fecha Fin de Vigencia de la promoción debe ser menor o igual al Periodo seleccionado';
+								vm.asignarPromocion.estatus = 'Activo';
+							}
+							
+						}
+
+					};
+
+					function showGrupoPromoConcepTable(promotion){
+
+						console.log('entro showGrupoPromoConcepTable:',promotion);
+						vm.promocionConcepto = {};
+						vm.promocionConcepto.nombrePromocion = promotion.nombrePromocion;
+						vm.promocionConcepto.concepto = promotion.concepto;
+						vm.promocionConcepto.conceptoPagos = promotion.conceptoPagos    ;
+						vm.promocionConcepto.headerColSpan = parseInt(vm.promocionConcepto.conceptoPagos.length) + 1;
+						vm.promocionConcepto.visible = true;
+
+					};
+
+					/*Sorting Promotion Table*/
+					function sortByPromotionTable(propertyName) {
+
+						vm.reversePromotionTable = (vm.propertyNamePromotionTable === propertyName) ? !vm.reversePromotionTable : false;
+						vm.propertyNamePromotionTable = propertyName;
+
+					};
+
+					/*Sorting Promotion Table*/
+					function sortByOfeGrupoPromotionTable(propertyName) {
+						
+						vm.reversePromotionTable = (vm.propertyOfeGrupoPromotionTable === propertyName) ? !vm.reverseOfeGrupoPromotionTable : false;
+						vm.propertyOfeGrupoPromotionTable = propertyName;
+
+					};
+
+					/*Add Promotion Params*/
+					vm.modalAddPromotionInstance = undefined;
+
+					var addPromotion = function(){
+						vm.modalAddPromotionInstance = $uibModal.open({
+							templateUrl: 'addNewPromotion.html',
+							windowClass: 'show',
+							size: 'lg',
+							scope: $scope,
+							backdrop: 'static'
+						});
+						return vm.modalAddPromotionInstance;
+					};
+
+					/*Call Add Promotion Modal*/
+					function openAddPromotionModal(){
+
+						angular.copy(vm.filterLayout,vm.filterAddPromotion);
+					
+						var modalPromotion = addPromotion();
+						
+						modalPromotion.result.then(function (data) {
+							$scope.handleSuccess(data);
+							console.log('se abre');
+						})
+						.then(function(){
+							console.log('¿?',arguments);
+						}, function (reason) {
+							console.log('se cierra');
+							closeNewPromotionModal();
+						});
+				
+						modalPromotion.rendered.then(function() {
+							
+							var dtToday = new Date();
+							
+							var month = dtToday.getMonth() + 1;
+							var day = dtToday.getDate();
+							var year = dtToday.getFullYear();
+							if(month < 10)
+								month = '0' + month.toString();
+							if(day < 10)
+								day = '0' + day.toString();
+							
+							var minDate = year + '-' + month + '-' + day;
+
+							var pfin = new Date(vm.filterAddPromotion.filterPeriod.FechaFin__c);
+							var month2 = pfin.getMonth() + 1;
+							var day2 = pfin.getDate()+1;
+							var year2 = pfin.getFullYear();
+							if(month2 < 10)
+								month2 = '0' + month2.toString();
+
+							var maxDate = year2 + '-' + month2 + '-' + day2;
+
+							$('#fInicioVigencia')[0].min = minDate ;
+							$('#fInicioVigencia')[0].max = maxDate;
+
+							//$('#fFinVigencia')[0].min = minDate ;
+							$('#fFinVigencia')[0].max = maxDate;
+
+							//Asignación automatica de fecha
+							vm.asignarPromocion.fechaInicioVigencia = new Date();
+							vm.asignarPromocion.fechaFinVigencia = new Date(year2, pfin.getMonth(), day2);
+							vm.asignarPromocion.Id = '';
+							//RJP: Seleccion default de letra beca
+							vm.filterAddPromotion.filterLetraBeca = ['Todas'];
+						});
+
+						/*$('[id="addNewPromotion.html"]').on('shown.bs.modal',function(){
+							console.log('jqueryModal')
+						});*/
+
+					};
+					
+					let paymentsDiscountsPerGroupModal = function() {
+						return $scope.paymentsDiscountsPerGroup = $uibModal.open({
+							templateUrl: 'paymentsDiscountsPerGroup.html',
+							windowClass: 'show',
+							size: 'lg',
+							scope: $scope,
+							backdrop: 'static'
+						});
+					};
+					
+					function openPaymentsDiscountsPerGroup() {
+						const FUNC_NAME = 'openPaymentsDiscountsPerGroup() | ';
+						paymentsDiscountsPerGroupModal().result
+							.then(response => {
+								$scope.handleSuccess(response);
+							})
+							.then(response => {
+								console.log(FUNC_NAME + '1st Callback | response', response);
+							})
+							.catch(error => {
+								console.log(FUNC_NAME + 'error:', error);
+							});
+					}
+					
+					/*Delete configuración de promoción*/
+					var deleteConfigPromocion = function(){
+						return $scope.modalDeleteConfigPromotion = $uibModal.open({
+							templateUrl: 'deleteConfig.html',
+							windowClass: 'show',
+							size: 'sm',
+							scope: $scope,
+							backdrop: 'static'
+						});
+					};
+
+					function opendeleteConfigPromotion(configuracion){
+						vm.configPromotiondelete = configuracion;
+						console.log('configuration', configuracion);
+						deleteConfigPromocion().result.then(function (data) {
+							$scope.handleSuccess(data);
+						})
+						.then(null, function (reason) {});   
+					};
+
+					function closedeleteConfigPromotion(){
+						$scope.modalDeleteConfigPromotion.dismiss('Cancel');
+					};
+
+					function aceptarDeleteConfigPromotion(){
+						console.log('Se borra configuración')
+						var toDelete = vm.configPromotiondelete.Id
+						console.log('deletePromotion::',toDelete);
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.deleteConfigPromotion}',toDelete).then(result => {
+
+							if( result.state == 'Success' ){
+
+								console.log(result.response);
+								vm.configPromotiondelete = '';
+								vm.asignarPromocion = {};
+								vm.asignarPromocion.NOEditable = false;
+								vm.promocionCreada = {Id: '',status: false};
+								vm.conceptos = {};
+								$scope.modalDeleteConfigPromotion.dismiss('Cancel');
+								getPromociones();
+								RequestFactory.toastMessageSuccess('Configuración de Promocion borrada.');
+
+							}else if( result.state == 'Exception' ){
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}
+						});
+					};
+
+					/*Add Promotion Params*/
+					var askToSavePromotion = function(){
+						return $scope.modalAskToSavePromotionInstance = $uibModal.open({
+							templateUrl: 'askPromotion.html',
+							windowClass: 'show',
+							size: 'md',
+							scope: $scope,
+							backdrop: 'static'
+						});
+					};
+
+					function openAskToSavePromotion(){
+						askToSavePromotion().result.then(function (data) {
+							$scope.handleSuccess(data);
+						})
+						.then(null, function (reason) {});
+					};
+
+					function closeAskPromotion(){
+						vm.promocionEditable = {
+							jsonPromocion: {},
+							jsonConfigurador: [],
+							configuradorId: ''
+						};
+						$scope.modalAskToSavePromotionInstance.dismiss('Cancel');
+					};
+
+					function cleanPromocionEditable(){
+						vm.promocionEditable = {
+							jsonPromocion: {},
+							jsonConfigurador: [],
+							configuradorId: ''
+						};
+					}
+
+					var deletePromocion = function(){
+						return $scope.modaldeletePromotionInstance = $uibModal.open({
+							templateUrl: 'deletePromotion.html',
+							windowClass: 'show',
+							size: 'sm',
+							scope: $scope,
+							backdrop: 'static'
+						});
+					};
+
+					function openDeletePromotion(promotion){
+						
+						vm.promocionToDelete = promotion;
+
+						deletePromocion().result.then(function (data) {
+							$scope.handleSuccess(data);
+						})
+						.then(null, function (reason) {});
+
+					};
+
+					function deletePromotion(){
+
+						var toDelete = {Id: vm.promocionToDelete.Id};
+						console.log('deletePromotion::',toDelete);
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.deletePromotion}',JSON.stringify(toDelete)).then(result => {
+
+							if( result.state == 'Success' ){
+
+								console.log(result.response);
+								vm.promocionToDelete = '';
+								vm.asignarPromocion = {};
+								vm.asignarPromocion.NOEditable = false;
+								vm.promocionCreada = {Id: '',status: false};
+								vm.conceptos = {};
+								$scope.modaldeletePromotionInstance.dismiss('Cancel');
+								getPromociones();
+								RequestFactory.toastMessageSuccess('Promocion borrada.');
+
+							}else if( result.state == 'Exception' ){
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}
+						});
+
+					};
+
+					function closeDeletePromotion(){
+						vm.promocionToDelete = '';                      
+						$scope.modaldeletePromotionInstance.dismiss('Cancel');
+					};
+
+					//Call Edit Promotion Modal
+					function editPromotionModal(promotion, configuradores){
+						const FUNC_NAME = 'editPromotionModal()';
+						console.log(FUNC_NAME + ' | promotion: ', promotion);
+						console.log(FUNC_NAME + ' | configuradores: ', configuradores);
+
+						 vm.configuradorPromocionOriginial = {
+						 	Id: configuradores[0].Id,
+						 	periodo: configuradores[0].Periodo__c,
+						 	modalidad: configuradores[0].Modalidad__c,
+						 	plantel: configuradores[0].Plantel__c,
+						 	nivel: configuradores[0].Nivel__c,
+						 	programa: configuradores[0].Programa__c
+						 };
+						 vm.configuradorPromocionOriginial = { Id: configuradores[0].Id };
+						vm.configurersToUpdate = configuradores;
+
+						vm.persistirDatos = {
+							pagoUnico: promotion.PagoUnico__c,
+							pagoDiferido: promotion.PagoDiferido__c,
+							cantidadPagos: promotion.CantidadPago__c,
+							editando: true
+                            
+						};
+						console.log('$$$$ Persistir datos 2', vm.persistirDatos);
+						angular.forEach(vm.filterLayout.filterListPeriod, function(value, key){
+							angular.forEach(configuradores, function (configurador, keyConfigurador){
+								console.log('configuradores::', value.Id + ',' + configurador.Periodo__cx);
+								if( value.Id == configurador.Periodo__c ){
+
+									vm.filterAddPromotion.filterListPeriod = vm.filterLayout.filterListPeriod;
+									vm.filterAddPromotion.filterPeriod = value;
+
+									RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getDataPerPeriod}',value.Id).then(result => {
+
+											if( result.state == 'Success' ){
+
+												splitFilterDataEditPromotion(result.data).then(function(resultPromise){
+
+													//START MODALITY
+													var modalidadP = '';
+													
+													for( var modalidad of resultPromise.filterListModality ){
+
+														if( modalidad.Name == configurador.Modalidad__r.Name ){
+
+															vm.filterAddPromotion.filterModality = modalidad;
+															modalidadP = modalidad.Name;
+															break;
+
+														}
+
+													}
+													//END MODALITY
+
+													//START PLANTEL
+													splitPlantelbyModalityPromotion(modalidadP).then(function(resultPM){
+
+														for( var plantel of resultPM.filterListViewPlantel ){
+
+															if( plantel.Name == configurador.Plantel__r.Name ){
+
+																vm.filterAddPromotion.filterPlantel.push(plantel);
+																break;
+															}
+
+														}   
+
+														//START NIVEL
+														splitNivelbyPlantelPromotion(vm.filterAddPromotion.filterPlantel).then(function(resultNP){
+
+															for( var nivel of resultNP.filterListViewNivel ){
+
+																if( nivel.Name == configurador.Nivel__r.Name ){
+
+																	vm.filterAddPromotion.filterNivel.push(nivel);
+																	break;
+
+																}
+
+															}   
+
+															
+															splitProgramabyNivelPromotion(vm.filterAddPromotion.filterNivel).then(function(resultPN){
+
+																for( var programa of resultPN.filterListViewProgram){
+
+																	if( programa.Name == configurador.Programa__r.Name ){
+
+																		vm.filterAddPromotion.filterProgram.push(programa);
+
+																		break;
+
+																	}
+
+																}                                                           
+
+															});
+
+															//END PROGRAMA
+
+														});
+
+														//END NIVEL
+
+													});
+													//END PLANTEL
+																																																												
+													//START LETRA
+													vm.filterAddPromotion.filterLetraBeca = [];
+													// if( promotion.Letra__c ){
+																										if (typeof configuradores[0].Letra__c !== 'undefined') {
+														console.log('promotion.Letra__c:',promotion.Letra__c);
+
+														for( var letraBeca of vm.filterAddPromotion.filterListViewLetraBeca){
+
+															if(configuradores[0].Letra__c.includes(letraBeca)){
+																console.log('se agrego letra:',letraBeca);
+																
+																vm.filterAddPromotion.filterLetraBeca.push( letraBeca);
+
+															}
+
+														}
+													}                                               
+
+													//END LETRA
+
+												});
+
+											}else if( result.state == 'Exception' ){
+
+												RequestFactory.toastMessageDanger(result.response);
+
+											}else if( result.state == 'Null' ){
+												
+											}                                               
+				
+									});
+
+								}
+							});
+							
+							
+
+						});
+						
+						vm.asignarPromocion.Id = (promotion.Id) ? promotion.Id : '' ;
+
+						if( promotion.editable == false || promotion.Estatus__c == 'En proceso de aprobación' ){
+							vm.asignarPromocion.NOEditable = true;
+						}
+
+						vm.asignarPromocion.nombrePromocion = (promotion.Name) ? promotion.Name : '' ;
+
+						vm.asignarPromocion.fechaInicioVigencia = (promotion.FechaInicioVigencia__c) ? new Date(promotion.FechaInicioVigencia__c) : undefined;
+
+						//add a day to the date
+						if( vm.asignarPromocion.fechaInicioVigencia != undefined ){
+							vm.asignarPromocion.fechaInicioVigencia.setDate(vm.asignarPromocion.fechaInicioVigencia.getDate() + 1);
+						}
+						
+						vm.asignarPromocion.fechaFinVigencia = (promotion.FechaFinVigencia__c) ? new Date(promotion.FechaFinVigencia__c ) : undefined;
+
+						if( vm.asignarPromocion.fechaFinVigencia != undefined ){
+							vm.asignarPromocion.fechaFinVigencia.setDate(vm.asignarPromocion.fechaFinVigencia.getDate() + 1);
+						}
+
+						vm.asignarPromocion.estatusOriginal = promotion.Estatus__c;
+
+						vm.asignarPromocion.aplicaOtrasPromociones = (promotion.AplicaOtrasPromociones__c) ? promotion.AplicaOtrasPromociones__c : false ;
+
+						vm.asignarPromocion.acumularDescuentos = (promotion.AcumularDescuentos__c) ? promotion.AcumularDescuentos__c : false ;
+
+						vm.asignarPromocion.requiereAutorizacion = (promotion.RequiereAutorizacion__c) ? promotion.RequiereAutorizacion__c : false  ;
+						
+						
+
+						vm.asignarPromocion.disponibleLandingPage = (promotion.DisponibleLandingPage__c) ? promotion.DisponibleLandingPage__c : false ;
+
+						vm.asignarPromocion.disponibleEjecutivo = (promotion.DisponibleEjecutivo__c ) ? promotion.DisponibleEjecutivo__c : false  ;
+
+						vm.asignarPromocion.mostrarFichaPago = (promotion.MostrarFichaPago__c) ? promotion.MostrarFichaPago__c : false ;
+
+						vm.asignarPromocion.mostrarImporteLeadOportunidad = (promotion.MostrarImporteLeadOportunidad__c ) ? promotion.MostrarImporteLeadOportunidad__c : false;
+
+						vm.asignarPromocion.estatus = promotion.Estatus__c;
+
+						//vm.conceptos = {};
+
+						for( var catalogo of vm.catalogoConceptos ){
+
+							if( catalogo.Id == promotion.NombreConcepto__c ){
+
+								vm.asignarPromocion.conceptoPromocion = catalogo ;
+								console.log('$$$$ vm.asignarPromocion.conceptoPromocion', vm.asignarPromocion.conceptoPromocion);
+
+							}
+
+						}
+						
+						vm.asignarPromocion.nombreConcepto = (promotion.NombreConcepto__c && promotion.NombreConcepto__r.Name) ? promotion.NombreConcepto__r.Name : '-';
+
+						vm.asignarPromocion.descripcionComercial = (promotion.DescripcionComercial__c) ? promotion.DescripcionComercial__c : '-';
+
+						vm.asignarPromocion.conceptoFijo = (promotion.ConceptoFijo__c) ? promotion.ConceptoFijo__c : false;
+
+						vm.asignarPromocion.pagoUnico = (promotion.PagoUnico__c) ? promotion.PagoUnico__c : false;
+
+						vm.asignarPromocion.pagoDiferido = (promotion.PagoDiferido__c) ? promotion.PagoDiferido__c : false;
+
+                        vm.asignarPromocion.promocionCero = (promotion.RequierePromocionCero__c) ? promotion.RequierePromocionCero__c : false;
+                        
+                        for(var i=0; i < vm.periodicidadList.length; i++){
+                            if(vm.periodicidadList[i].Value == promotion.Periodicidad__c){
+                                vm.asignarPromocion.periodicidad = vm.periodicidadList[i];
+                            }
+                        }
+
+                        //vm.asignarPromocion.periodicidad = (promotion.Periodicidad__c) ? promotion.Periodicidad__c : null;
+
+						vm.asignarPromocion.cantidadPagos = (promotion.CantidadPago__c) ? promotion.CantidadPago__c : 0;
+
+						vm.asignarPromocion.importeConcepto = (promotion.ImporteConcepto__c) ? promotion.ImporteConcepto__c : 0;
+
+						vm.asignarPromocion.descuentoConcepto = (promotion.PorcentajeDescuento__c) ? promotion.PorcentajeDescuento__c : 0;
+
+						if( promotion.NombreConcepto__r
+						&& ( promotion.NombreConcepto__r.Name == 'Colegiatura' 
+						|| promotion.NombreConcepto__r.Name == 'Reinscripción' ) ){
+
+							vm.colegiaturaInscripcion = true;
+							vm.asignarPromocion.cantidadPagosOE = ( promotion.SeleccionarCantidadPagosOE__c  ) ? promotion.SeleccionarCantidadPagosOE__c : false;
+						}
+						
+						vm.asignarPromocion.isGranted = promotion.isGranted;
+						
+						vm.promocionCreada = {Id: promotion.Id,status: true};
+						
+						console.log(FUNC_NAME + ' | vm.asignarPromocion:', vm.asignarPromocion);
+						
+						addPromotion().result.then(function (data) {
+							
+							$scope.handleSuccess(data);
+							
+						})
+						.then(null, function (reason) {
+							console.log('se cierra editable');
+							closeNewPromotionModal();
+							vm.configurersToUpdate = [];
+						});
+
+					};
+
+					/*Save New Promotion*/
+					function saveNewPromotionModal(promotion, filters, tipo) {
+						const FUNC_NAME = 'saveNewPromotionModal() | ';
+						console.log(FUNC_NAME + 'promotion:', promotion);
+						console.log(FUNC_NAME + 'vm.filterLayout:', vm.filterLayout);
+						console.log(FUNC_NAME + 'pro.filterLayout.filterPeriod:', vm.filterLayout.filterPeriod);
+						console.log(FUNC_NAME + 'vm.configurersToUpdate:', vm.configurersToUpdate);
+						
+						// vm.configurersToUpdate = (typeof vm.configurersToUpdate !== 'undefined') ? vm.configurersToUpdate : [];
+						vm.configurersToUpdate = [];
+						
+						var banderaExito = true;
+						try {
+						let period = vm.filterLayout.filterListPeriod.find(nP => {
+							return (nP.Name === vm.filterLayout.filterPeriod.Name);
+						});
+						if (typeof period === 'undefined') {
+							period = vm.filterLayout.filterListPeriod[0];
+						}
+						console.log(FUNC_NAME + 'period:', period);
+						let tempPFI = new Date(promotion.fechaInicioVigencia);
+						tempPFI = new Date(tempPFI.getFullYear() + '-' + (tempPFI.getMonth() + 1) + '-' + tempPFI.getDate());
+						let promocionFechaInicio = tempPFI.valueOf();
+						tempPFI = new Date(promotion.fechaFinVigencia);
+						tempPFI = new Date(tempPFI.getFullYear() + '-' + (tempPFI.getMonth() +1) + '-' + tempPFI.getDate());
+						let promocionFechaFin = tempPFI.valueOf();
+						// tempPFI = new Date(period.FechaInicioReal__c);
+						tempPFI = new Date(period.FechaInicio__c);
+						tempPFI.setHours(tempPFI.getHours() + 6);
+						tempPFI = new Date(tempPFI.getFullYear() + '-' + (tempPFI.getMonth() + 1) + '-' + tempPFI.getDate());
+						let periodoFechaInicio = tempPFI.valueOf();
+						tempPFI = new Date(period.FechaFin__c);
+						tempPFI.setHours(tempPFI.getHours() + 6);
+						tempPFI = new Date(tempPFI.getFullYear() + '-' + (tempPFI.getMonth() + 1) + '-' + tempPFI.getDate());
+						let periodoFechaFin = tempPFI.valueOf();
+						console.log(FUNC_NAME + 'promocionFechaInicio:', promocionFechaInicio);
+						console.log(FUNC_NAME + 'periodoFechaInicio:', periodoFechaInicio);
+						console.log(FUNC_NAME + 'promocionFechaFin:', promocionFechaFin);
+						console.log(FUNC_NAME + 'periodoFechaFin:', periodoFechaFin);
+						if (promocionFechaInicio < periodoFechaInicio) {
+							RequestFactory.toastMessageWarning('La Fecha Inicio de Vigencia de la promoción debe ser mayor o igual a la fecha de inicio del Periodo seleccionado');
+							banderaExito = false;
+						} else if (promocionFechaInicio >= periodoFechaFin) {
+							RequestFactory.toastMessageWarning('La Fecha Inicio de Vigencia de la promoción no puede ser mayor o igual a la Fecha Fin de Vigencia');
+							banderaExito = false;
+						} else if (promocionFechaFin > periodoFechaFin) {
+							RequestFactory.toastMessageWarning('La Fecha Fin de Vigencia de la promoción debe ser menor o igual a la fecha de fin del Periodo seleccionado');
+							banderaExito = false;
+						} else if (promocionFechaFin <= periodoFechaInicio) {
+							RequestFactory.toastMessageWarning('La Fecha Fin de Vigencia de la promoción no puede ser menor o igual a la La Fecha Inicio de Vigencia');
+							banderaExito = false;
+						} else if (!promotion.hasOwnProperty('conceptoPromocion') || !promotion.conceptoPromocion.hasOwnProperty('Name')) {
+							RequestFactory.toastMessageWarning('Debe de seleccionar un Concepto');
+							banderaExito = false;
+						} else if(promotion.pagoDiferido == true 
+						&& ( promotion.cantidadPagos == undefined 
+						|| promotion.cantidadPagos == '' )
+						&& ( promotion.conceptoPromocion.Name != 'Colegiatura' 
+						&& promotion.conceptoPromocion.Name != 'Reinscripción' ) && promotion.cantidadPagosOE == false) {
+							RequestFactory.toastMessageWarning('Debe de ingresar una cantidad de pagos:' + promotion.conceptoPromocion.Name);
+							banderaExito = false;
+						} else if((banderaExito === true) && ( promotion.pagoDiferido == false 
+						|| promotion.pagoDiferido == undefined )
+						&& ( promotion.pagoUnico == false 
+						|| promotion.pagoUnico == undefined )
+						&& ( promotion.conceptoPromocion.Name != 'Colegiatura' 
+						&& promotion.conceptoPromocion.Name != 'Reinscripción')) {
+							RequestFactory.toastMessageWarning('Debe de seleccionar ya sea un “Pago diferido” o “Pago Único”' );
+							banderaExito = false;
+						}
+						
+						if(banderaExito){
+
+							var jsonPromotion = {};
+
+							console.log('promotion.Id:',promotion.Id,' vm.promocionCreada.Id:',vm.promocionCreada.Id);
+
+							if( promotion.Id && promotion.Id != '' ){
+
+								jsonPromotion.Id = promotion.Id;
+
+							}else if( vm.promocionCreada.Id && vm.promocionCreada.Id != '' ){
+
+								jsonPromotion.Id = vm.promocionCreada.Id;
+
+							}
+
+							console.log('jsonPromotion.Id:',jsonPromotion.Id);
+
+							jsonPromotion.Name = promotion.nombrePromocion;
+
+							jsonPromotion.FechaInicioVigencia__c = RequestFactory.formatDateYYYMMDD(promotion.fechaInicioVigencia);
+
+							jsonPromotion.FechaFinVigencia__c = RequestFactory.formatDateYYYMMDD(promotion.fechaFinVigencia);
+
+							jsonPromotion.AplicaOtrasPromociones__c = promotion.aplicaOtrasPromociones;
+							jsonPromotion.AcumularDescuentos__c = promotion.acumularDescuentos;
+							jsonPromotion.RequiereAutorizacion__c = promotion.requiereAutorizacion;
+							jsonPromotion.DisponibleLandingPage__c = promotion.disponibleLandingPage;
+							jsonPromotion.DisponibleEjecutivo__c = promotion.disponibleEjecutivo;
+							jsonPromotion.MostrarFichaPago__c = promotion.mostrarFichaPago;
+							jsonPromotion.MostrarImporteLeadOportunidad__c = promotion.mostrarImporteLeadOportunidad;                           
+						
+							
+							if( tipo == 'aprobación'){
+
+								jsonPromotion.Estatus__c = 'En proceso de aprobación';
+								jsonPromotion.RequiereAprobacionCreacion__c = true;
+								
+							}else{
+
+								jsonPromotion.Estatus__c = ( promotion.estatus == undefined || promotion.estatus == '' ) ? 'Activo' : promotion.estatus;
+							}
+							
+							
+							
+
+							jsonPromotion.NombreConcepto__c = promotion.conceptoPromocion.Id;
+
+							var conceptoToSave = '';
+
+							if( promotion.conceptoPromocion.Name == 'Colegiatura' 
+							|| promotion.conceptoPromocion.Name == 'Reinscripción' ){
+
+								conceptoToSave = promotion.conceptoPromocion.Name;
+								
+
+							}  
+							jsonPromotion.SeleccionarCantidadPagosOE__c = promotion.cantidadPagosOE;
+							if (!promotion.hasOwnProperty('periodicidad')) {
+								promotion.periodicidad = { Value: '' };
+							}
+							jsonPromotion.DescripcionComercial__c = promotion.descripcionComercial;
+							jsonPromotion.ConceptoFijo__c = promotion.conceptoFijo;
+							jsonPromotion.PagoUnico__c = promotion.pagoUnico;
+							jsonPromotion.RequierePromocionCero__c = promotion.promocionCero;
+							jsonPromotion.Periodicidad__c = promotion.periodicidad.Value;
+							jsonPromotion.PagoDiferido__c = promotion.pagoDiferido; 
+							jsonPromotion.CantidadPago__c = promotion.cantidadPagos != undefined && promotion.cantidadPagos != '' ? promotion.cantidadPagos : 0;
+							jsonPromotion.ImporteConcepto__c = promotion.importeConcepto;
+							jsonPromotion.PorcentajeDescuento__c = promotion.descuentoConcepto;
+
+							var jsonPromotionFilters = getFilters('Creando Promocion');
+							var configuradorPromocionTexto = [];
+							var configuradorPromocion = [];
+							
+							let cambioConfiguradorPromocion = true;
+							let configuradorPromocionToDelete = '';
+							let cambioNoPagosDescuento = true;
+							
+							if (vm.configurersToUpdate.length > 0) {
+								for (let { Id, Letra__c, Modalidad__c, Nivel__c, Periodo__c, Plantel__c, Programa__c } of vm.configurersToUpdate) {
+									configuradorPromocion.push({ Id, Periodo__c, Modalidad__c, Plantel__c, Nivel__c, Programa__c, Letra__c });
+								}
+								cambioConfiguradorPromocion = true;
+								configuradorPromocionToDelete = '';
+								cambioNoPagosDescuento = true;
+								  console.log('$$$$ vm.persistirDatos.pagoUnico', vm.persistirDatos.pagoUnico);
+                                            console.log('$$$$ vm.persistirDatos.pagoDiferido', vm.persistirDatos.pagoDiferido);
+                                            console.log('$$$$ vm.persistirDatos.cantidadPagos', vm.persistirDatos.cantidadPagos);
+                                            console.log('$$$$ vm.persistirDatos.editando', vm.persistirDatos.editando);
+								if((jsonPromotion.PagoUnico__c == vm.persistirDatos.pagoUnico) && (jsonPromotion.PagoDiferido__c == vm.persistirDatos.pagoDiferido) && (jsonPromotion.CantidadPago__c == vm.persistirDatos.cantidadPagos)) {
+									console.log('$$$$ entre IF PagoUnico, Pago Diferido y Descuento');
+                                          cambioNoPagosDescuento = false;
+                                          
+								}
+							} else {
+                                          console.log('$$$$ entré else 3588');
+								for( var programa of vm.filterAddPromotion.filterListProgram){
+
+									if(programa){
+
+										if( programa.Name 
+										&& jsonPromotionFilters.filterProgram.indexOf(programa.Name) != -1){
+
+											if( programa.Nivel 
+											&& jsonPromotionFilters.filterNivel.indexOf(programa.Nivel) != -1 ){
+
+												if( programa.Plantel 
+												&& jsonPromotionFilters.filterPlantel.indexOf(programa.Plantel) != -1 ){
+
+													configuradorPromocionTexto.push(programa);
+
+													configuradorPromocion.push({
+														Periodo__c: programa.PeriodoId,
+														Modalidad__c: programa.ModalidadId,
+														Plantel__c: programa.PlantelId,
+														Nivel__c: programa.NivelId,
+														Programa__c: programa.Id
+													});
+													
+												}
+
+											}
+
+										}
+
+									}
+
+								}
+								
+								cambioConfiguradorPromocion = true;
+								console.log(FUNC_NAME + 'vm.configuradorPromocionOriginial:', vm.configuradorPromocionOriginial);
+								console.log(FUNC_NAME + 'configuradorPromocion:', configuradorPromocion);
+								if( configuradorPromocion.length > 0 ){
+
+									if( configuradorPromocion.length == 1 
+									&& configuradorPromocion[0].Periodo__c == vm.configuradorPromocionOriginial.periodo 
+									&& configuradorPromocion[0].Modalidad__c == vm.configuradorPromocionOriginial.modalidad 
+									&& configuradorPromocion[0].Plantel__c == vm.configuradorPromocionOriginial.plantel 
+									&& configuradorPromocion[0].Nivel__c == vm.configuradorPromocionOriginial.nivel 
+									&& configuradorPromocion[0].Programa__c == vm.configuradorPromocionOriginial.programa ){
+
+										configuradorPromocion[0].Id = vm.configuradorPromocionOriginial.Id;
+										cambioConfiguradorPromocion = false;
+
+									}else{
+
+										for( var cP of configuradorPromocion){
+
+											if( cP.Periodo__c == vm.configuradorPromocionOriginial.periodo 
+											&& cP.Modalidad__c == vm.configuradorPromocionOriginial.modalidad 
+											&& cP.Plantel__c == vm.configuradorPromocionOriginial.plantel 
+											&& cP.Nivel__c == vm.configuradorPromocionOriginial.nivel 
+											&& cP.Programa__c == vm.configuradorPromocionOriginial.programa ){
+
+												cP.Id = vm.configuradorPromocionOriginial.Id;
+												cambioConfiguradorPromocion = false;
+
+											}
+
+										}
+
+									}
+									
+								}
+
+								configuradorPromocionToDelete = '';
+								
+            					console.log('$$$$ cambioConfiguradorPromocion', cambioConfiguradorPromocion);
+            					console.log('$$$$ vm.configuradorPromocionOriginial', vm.configuradorPromocionOriginial);
+           						console.log('$$$$ vm.persistirDatos.editando', vm.persistirDatos.editando);
+            					console.log('$$$$ vm.configuradorPromocionOriginial.Id', vm.configuradorPromocionOriginial.Id);
+            
+								if( cambioConfiguradorPromocion 
+								&& vm.configuradorPromocionOriginial 
+								&& vm.configuradorPromocionOriginial.Id != undefined 
+								&& vm.persistirDatos.editando == true ){
+
+									configuradorPromocionToDelete = vm.configuradorPromocionOriginial.Id;
+
+								}
+								
+								cambioNoPagosDescuento = true;
+
+								if( jsonPromotion.PagoUnico__c == vm.persistirDatos.pagoUnico
+								&& jsonPromotion.PagoDiferido__c == vm.persistirDatos.pagoDiferido
+								&& jsonPromotion.CantidadPago__c == vm.persistirDatos.cantidadPagos ){
+
+									cambioNoPagosDescuento = false;
+
+								}
+
+								for( var promo of configuradorPromocion ) {
+
+									var letras = '';
+
+									for( var letra of jsonPromotionFilters.filterLetraBeca ) {
+
+										letras += letra + ';';
+
+									}
+
+									promo.Promocion__c = '';
+									promo.Letra__c = letras;
+
+								}
+							}
+							
+							console.log('To save Promotion',jsonPromotion);
+							console.log('To Save ConfiguratorPromotion withID y Letras:',configuradorPromocion);
+							console.log('To Save programaTexto:',configuradorPromocionTexto);
+							console.log('cambioConfiguradorPromocion:',cambioConfiguradorPromocion);
+							console.log('cambioNoPagosDescuento:',cambioNoPagosDescuento);
+							// debugger;
+                           
+              				
+           						console.log('$$$$ vm.persistirDatos.editando', vm.persistirDatos.editando);
+            //console.log('$$$$ vm.configuradorPromocionOriginial.Id', vm.configuradorPromocionOriginial.Id);
+							if( vm.persistirDatos.editando == true ){
+								// console.log(1);
+                                console.log('$$$$ EntreIF  3713');
+            					console.log('$$$$ cambioConfiguradorPromocion' + cambioConfiguradorPromocion);
+                                console.log('$$$$ cambioNoPagosDescuento' + cambioNoPagosDescuento);
+								if( cambioConfiguradorPromocion 
+								|| cambioNoPagosDescuento ){
+                                    console.log('$$$$ ENTRE IF 3718' );
+										// console.log(2);
+										vm.promocionEditable = {
+										jsonPromocion: jsonPromotion,
+										jsonConfigurador: configuradorPromocion,
+										configuradorId: configuradorPromocionToDelete,
+										concepto: conceptoToSave
+									};
+									console.log('$$$$ vm.promocionEditable:', vm.promocionEditable);
+									openAskToSavePromotion();
+
+								}else{
+                                    console.log('$$$$ ENTRÉ ELSE 3731');
+									console.log( '$$$$ jsonPromotion: ', jsonPromotion);
+                                    console.log( '$$$$ configuradorPromocion: ', configuradorPromocion);
+                                    console.log( '$$$$ configuradorPromocionToDelete: ', configuradorPromocionToDelete);
+                                    console.log( '$$$$ conceptoToSave: ', conceptoToSave);
+									savePromotionEditada(jsonPromotion,configuradorPromocion,configuradorPromocionToDelete,conceptoToSave,false);
+								}
+								
+							}else{
+                                console.log('$$$$ ENTRÉ ELSE 3738');
+									console.log( '$$$$ jsonPromotion: ', jsonPromotion);
+                                    console.log( '$$$$ configuradorPromocion: ', configuradorPromocion);
+                                    console.log( '$$$$ configuradorPromocionToDelete: ', configuradorPromocionToDelete);
+                                    console.log( '$$$$ conceptoToSave: ', conceptoToSave);
+								// console.log(FUNC_NAME + 'jsonPromotion: ' + jsonPromotion + ', configuradorPromocion: ' + configuradorPromocion + ', configuradorPromocionToDelete: ' + configuradorPromocionToDelete + ', conceptoToSave: ' + conceptoToSave);
+								savePromotionEditada(jsonPromotion,configuradorPromocion,configuradorPromocionToDelete,conceptoToSave,false);
+							}
+						}
+						} catch (e) {
+							console.error(e);
+						}
+					};
+
+					function inactivatePromotion(promotionId,estatus){
+
+						var jsonPromotion = {};
+
+						jsonPromotion.Id = promotionId;
+						jsonPromotion.Estatus__c = estatus;
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.upsertPromotion}',JSON.stringify(jsonPromotion)).then(result => {
+
+							if( result.state == 'Success'){
+
+								var status = ( estatus == 'Activo' ) ? 'Activada' : 'Inactivada';
+								RequestFactory.toastMessageSuccess('Promoción '+status);
+								closeNewPromotionModal();
+
+							}else {
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}
+
+						});
+
+					};
+
+					function aceptarGuardarPromocion() {
+						const FUNC_NAME = 'aceptarGuardarPromocion()';
+						console.log(FUNC_NAME + ' | vm.promocionEditable.jsonPromocion: ', vm.promocionEditable.jsonPromocion, ',vm.promocionEditable.jsonConfigurador: ', vm.promocionEditable.jsonConfigurador, ',vm.promocionEditable.configuradorId:', vm.promocionEditable.configuradorId, ',vm.promocionEditable.concepto: ', vm.promocionEditable.concepto);
+						savePromotionEditada(vm.promocionEditable.jsonPromocion,vm.promocionEditable.jsonConfigurador,vm.promocionEditable.configuradorId,vm.promocionEditable.concepto,true);
+					};
+
+					function savePromotionEditada(jsonPromotion,configuradorPromocion,configuradorPromocionToDelete,conceptoToSave,modalAdvertencia){
+						$('#cover-spin').show();
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.upsertPromotionAndConfigurator}',JSON.stringify(jsonPromotion),configuradorPromocion,configuradorPromocionToDelete,conceptoToSave,false).then(resultP => {
+
+							if( resultP.state == 'Success' ){
+
+								$('#cover-spin').hide();
+
+								if( modalAdvertencia ){
+									closeAskPromotion();
+								}
+								
+								RequestFactory.toastMessageSuccess('Promoción guardada correctamente.');
+
+								vm.promocionEditable = {
+									jsonPromocion: {},
+									jsonConfigurador: [],
+									configuradorId: ''
+								};
+
+								vm.promocionCreada.Id = resultP.responsePromocion.Id;
+								vm.promocionCreada.status = true;
+								closeNewPromotionModal();
+
+							}else if( resultP.state == 'Exception' ){
+
+								$('#cover-spin').hide();
+
+								if( modalAdvertencia ){
+									closeAskPromotion();
+								}
+
+								vm.promocionEditable = {
+									jsonPromocion: {},
+									jsonConfigurador: [],
+									configuradorId: ''
+								};
+
+								RequestFactory.toastMessageDanger(resultP.response);
+
+							}
+
+						});
+					};
+
+					//Close Add Promotion Modal
+					function closeNewPromotionModal() {
+						const FUNC_NAME = 'closeNewPromotionModal()';
+						console.log(FUNC_NAME + 'vm.closeNewPromotionModalCounter:', vm.closeNewPromotionModalCounter);
+						if (vm.closeNewPromotionModalCounter === 1) {
+							vm.asignarPromocion = {};
+							vm.asignarPromocion.NOEditable = false;
+							vm.colegiaturaInscripcion = false;
+							vm.persistirDatos = {
+								pagoUnico: false,
+								pagoDiferido: false,
+								cantidadPagos: 0,
+								editando: false
+							};
+							vm.filterAddPromotion = {
+
+								filterPeriod : '',
+								filterListPeriod : [],
+								filterModality : '',
+								filterListModality : [],
+								filterLetraBeca : [],
+								filterListViewLetraBeca: [
+									'Todas','A','B','C','D','E','F','H'
+								],
+								filterPlantelTodos: false,
+								filterPlantel : [],
+								filterListPlantel : [],
+								filterListViewPlantel : [],
+								filterNivelTodos: false,
+								filterNivel : [],
+								filterListNivel : [],
+								filterListViewNivel : [],
+								filterProgramTodos: false,
+								filterProgram : [],
+								filterListProgram : [],
+								filterListViewProgram : [],
+								searchPromotionText : '',
+								filterGrupo : '',
+								filterListGrupos : ''
+
+							};
+
+							vm.promocionCreada = {Id: '',status: false};
+							vm.conceptos = {};
+
+							getPromociones();
+							// getLetrasBeca();
+							// getFilterPeriodo();
+							// getConceptosPerCatalog();
+
+							vm.modalAddPromotionInstance.close();
+							
+							vm.closeNewPromotionModalCounter = 2;
+						} else {
+							vm.closeNewPromotionModalCounter = 1;
+						}
+					};
+
+					/*Add Concepto Params*/
+					var addConcept = function(){
+						return $scope.modalAddConceptInstance = $uibModal.open({
+							templateUrl: 'addNewConcept.html',
+							windowClass: 'show',
+							size: 'lg',
+							scope: $scope,
+							backdrop: 'static'
+						});
+					};
+
+					/*Call Add Promotion Modal*/
+					function openAddConceptModal(){ 
+
+						addConcept().result.then(function (data) {
+							$scope.handleSuccess(data);
+						})
+						.then(null, function (reason) {});
+
+					};
+					
+					function tipoConcepto(concepto){
+						console.log('tipoConcepto::concepto::',concepto);
+						console.log('tipoConcepto::filterAddPromotion::',vm.filterAddPromotion);
+						if (vm.filterAddPromotion && vm.filterAddPromotion.filterProgram && vm.filterAddPromotion.filterProgram.length == 1 && (concepto.HeredarCantidadPagosColegiaturaOE__c == true || concepto.HeredarCantidadPagosInscripcionOE__c == true)) {
+							console.log('tipoConcepto::entraif::');
+							vm.colegiaturaInscripcion = true;
+							vm.asignarPromocion.cantidadPagosOE = true;
+							vm.asignarPromocion.pagoDiferido = true;
+							vm.asignarPromocion.pagoUnico = false;
+							vm.asignarPromocion.cantidadPagos = concepto.HeredarCantidadPagosColegiaturaOE__c == true ? vm.filterAddPromotion.filterProgram[0].Colegiatura : vm.filterAddPromotion.filterProgram[0].Inscripciones;
+							console.log('concepto', concepto);
+							console.log('programa', vm.filterAddPromotion.filterProgram);
+							//getConceptos(vm.filterAddPromotion.filterProgram[0].OfertaEducativa, concepto);//RJP
+						}else{
+							vm.colegiaturaInscripcion = false;
+							vm.asignarPromocion.conceptoPromocion;
+							vm.asignarPromocion.cantidadPagosOE = false;
+							// vm.asignarPromocion.cantidadPagos = null;
+							vm.asignarPromocion.cantidadPagos = (vm.asignarPromocion.pagoUnico === true) ? 1 : null;
+						}
+					};
+
+					function getConceptos(ofertaEdu, concepto){
+						//Se obtienen los conceptos de pago
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getDataConceptoPago}',ofertaEdu).then(result => {
+								if( result.state == 'Success' ){
+									console.log('data ', result.data);
+									console.log('concepto2', concepto);
+									angular.forEach(result.data,function(c,i){
+										console.log(c);
+										if(c.ConceptoPago__r.Name == concepto.Name){
+											vm.asignarPromocion.importeConcepto = c.Monto__c;
+										}
+									});
+								}else if( result.state == 'Exception' ){
+
+									RequestFactory.toastMessageDanger(result.response);
+									vm.asignarPromocion.importeConcepto = '';
+
+								}else if( result.state == 'Null' ){
+									vm.asignarPromocion.importeConcepto = '';
+								}
+						});
+					}
+
+					function pagosOEConcepto(){
+						if(vm.asignarPromocion.cantidadPagosOE == true){
+							if( vm.asignarPromocion.pagoUnico == true ) {
+								vm.asignarPromocion.pagoUnico = false;
+							}
+							if( vm.asignarPromocion.pagoDiferido == true ) {
+								vm.asignarPromocion.pagoDiferido = false;
+							}
+							vm.asignarPromocion.cantidadPagos = 0;
+						}
+					};
+
+					function tipoPagoUnico(){
+						if( vm.asignarPromocion.pagoUnico == true ){
+
+							vm.asignarPromocion.cantidadPagos = '1';
+
+							if( vm.asignarPromocion.pagoDiferido == true ){
+								vm.asignarPromocion.pagoDiferido = false;
+							}
+						}
+					};
+
+					function tipoPagoDiferido(){
+						if( vm.asignarPromocion.pagoDiferido == true ){
+							if( vm.asignarPromocion.pagoUnico == true ){
+								vm.asignarPromocion.pagoUnico = false;
+							}
+						}
+					};
+
+					function editConceptModal(objConcepto){
+
+						angular.forEach(vm.catalogoConceptos, function(value, key){
+							if( value.Id == objConcepto.Id ){
+								vm.agregarConcepto.conceptoPromocion = value ;
+							}
+						});
+						
+						vm.agregarConcepto.conceptoFijo = objConcepto.conceptoFijo ;
+						vm.agregarConcepto.pagoUnico = objConcepto.pagoUnico ;
+						vm.agregarConcepto.pagoDiferido = objConcepto.pagoDiferido ;
+						vm.agregarConcepto.descripcionComercial = objConcepto.descripcionComercial ;
+						vm.agregarConcepto.cantidadPagos = objConcepto.cantidadPago ;
+						vm.agregarConcepto.importeConcepto = objConcepto.importeConcepto ;
+						vm.agregarConcepto.descuentoConcepto = objConcepto.porcentajeDescuento;
+                        vm.agregarConcepto.RequierePromocionCero__c = objConcepto.promocionCero;
+                        vm.agregarConcepto.Periodicidad__c = objConcepto.periodicidad;
+
+						/*addConcept().result.then(function (data) {
+							$scope.handleSuccess(data);
+						})
+						.then(null, function (reason) {}); */
+					};
+
+					function saveNewConceptModal(concepto){
+						console.log('$$$$ concepto',concepto);
+						var jsonParam = {};
+
+						jsonParam.Id = vm.promocionCreada.Id;
+						jsonParam.NombreConcepto__c = concepto.conceptoPromocion.Id;
+						jsonParam.DescripcionComercial__c = concepto.descripcionComercial;
+
+						jsonParam.ConceptoFijo__c = concepto.conceptoFijo;
+						jsonParam.PagoUnico__c = concepto.pagoUnico;
+						jsonParam.PagoDiferido__c = concepto.pagoDiferido; 
+                        jsonParam.RequierePromocionCero__c = promotion.promocionCero;
+                        jsonParam.Periodicidad__c = promotion.periodicidad;
+						jsonParam.CantidadPago__c = concepto.cantidadPagos != undefined && concepto.cantidadPagos != '' ? concepto.cantidadPagos : 0;
+						jsonParam.ImporteConcepto__c = concepto.importeConcepto;
+						jsonParam.PorcentajeDescuento__c = concepto.descuentoConcepto;                      
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.upsertPromotion}',JSON.stringify(jsonParam)).then(result => {
+
+							if( result.state == 'Success' ){
+
+								console.log('saveNewConceptModal upsertPromotion:',result);
+								vm.promocionCreada.Id = result.response.Id;
+								vm.promocionCreada.status = true;
+
+								vm.conceptos = {};
+
+								vm.conceptos.Id = (result.response.NombreConcepto__c) ? result.response.NombreConcepto__c : undefined;
+
+								vm.conceptos.nombreConcepto = (result.response.NombreConcepto__r && result.response.NombreConcepto__r.Name) ? result.response.NombreConcepto__r.Name : '-';
+
+								vm.conceptos.descripcionComercial = (result.response.DescripcionComercial__c) ? result.response.DescripcionComercial__c : '-';
+
+								vm.conceptos.conceptoFijo = (result.response.ConceptoFijo__c) ? result.response.ConceptoFijo__c : false;
+
+								vm.conceptos.pagoUnico = (result.response.PagoUnico__c) ? result.response.PagoUnico__c : false;
+
+								vm.conceptos.pagoDiferido = (result.response.PagoDiferido__c) ? result.response.PagoDiferido__c : false;
+
+								vm.conceptos.cantidadPago = (result.response.CantidadPago__c) ? result.response.CantidadPago__c : 0;
+
+								vm.conceptos.importeConcepto = (result.response.ImporteConcepto__c) ? result.response.ImporteConcepto__c : 0;
+
+								vm.conceptos.porcentajeDescuento = (result.response.PorcentajeDescuento__c) ? result.response.PorcentajeDescuento__c : 0;
+
+								RequestFactory.toastMessageSuccess('Concepto guardado correctamente.');
+								$scope.modalAddConceptInstance.dismiss('Cancel');
+								
+							}else if( result.state == 'Exception' ){
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}
+
+						});
+
+					};
+
+					//Close Concept Modal
+					function closeNewConceptModal() {
+						vm.agregarConcepto = [];
+						$scope.modalAddConceptInstance.dismiss('Cancel');
+					};
+
+					/*Convivencia Promociones Params*/
+					var convivenciaPromocionesModal = function(){
+						return $scope.modalConvivenciaPromociones = $uibModal.open({
+							templateUrl: 'configurarConvivencias.html',
+							windowClass: 'show',
+							size: 'lg',
+							scope: $scope,
+							backdrop: 'static'
+						});
+					};
+
+					function moveToChoosedList(item) {
+
+						vm.convivencia.choosedPromotions.push(item);
+						vm.convivencia.availablePromotions.splice(vm.convivencia.availablePromotions.indexOf(item), 1);
+
+					};
+						  
+					function moveToAvailableList(item) {
+
+						vm.convivencia.availablePromotions.push(item);
+						vm.convivencia.choosedPromotions.splice(vm.convivencia.choosedPromotions.indexOf(item), 1);   
+
+					};
+
+					/*Open Convivencia Promociones Modal*/
+					function openConvivenciaPromocionesModal(configuracion, editable){ 
+						const FUNC_NAME = 'openConvivenciaPromocionesModal()';
+						vm.convivencia.availablePromotions = [];
+						vm.convivencia.choosedPromotions = [];
+						vm.convivencia.existentPromotions = [];
+						vm.convivencia.tipo = 'Promocion';
+						vm.convivencia.promotionPadre = {Id: configuracion.Id , Name: configuracion.Promocion__r.Name, Editable: editable};
+
+						var promocionesPosibles = [];
+
+						console.log('promoElegida:',configuracion);
+						console.log('configuracion.editable:',editable);
+
+						// if( configuracion.Promocion__r.AplicaOtrasPromociones__c == true && editable == true ){
+							if (configuracion.Promocion__r.AplicaOtrasPromociones__c == true) {
+							console.log('promoElegida::si cumple');
+							RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getPromocionesConvivencias}',
+								configuracion.Periodo__c,
+								configuracion.Modalidad__c,
+								configuracion.Plantel__c,
+								configuracion.Nivel__c,
+								configuracion.Programa__c,
+								configuracion.Letra__c,
+								configuracion.Promocion__r.NombreConcepto__r.Name,
+								'Promociones').then(result =>{
+
+									if( result.state == 'Success'){
+
+										console.log('getPromocionesConvivencias:',result.data);
+
+										for( var promo of result.data ){
+											// if( promo.editable == true
+											// && promo.promocion.Promocion__r.Estatus__c == 'Activo' 
+											// && promo.promocion.Id != configuracion.Id 
+											// && promo.promocion.Promocion__r.AplicaOtrasPromociones__c == true ){
+											if ((promo.promocion.Promocion__r.Estatus__c == 'Activo') && (promo.promocion.Id != configuracion.Id) && (promo.promocion.Promocion__r.AplicaOtrasPromociones__c == true)) {
+												promocionesPosibles.push({Id: promo.promocion.Id, Name: promo.promocion.Promocion__r.Name, enable: promo.editable});
+											}
+										}
+
+										console.log('promocionesPosibles:',promocionesPosibles);
+										console.log('$$$$ promotion.Id',configuracion.Id);
+										console.log('$$$$ pvm.convivencia.tipo', vm.convivencia.tipo);
+										//Validar Existentes
+										RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getPromotionConvivencia}',configuracion.Id,vm.convivencia.tipo).then(result1 => {
+											console.log('$$$$ result1.state: REQUEST',result1.state);
+											if( result1.state == 'Success' ){
+												console.log('$$$$ ENTRE SUCESS');
+												if( result1.data.length > 0 ){
+														console.log('$$$$ result1.data', result1.data);
+													vm.convivencia.existentPromotions = result1.data;
+													console.log('convivencias existentes:',vm.convivencia.existentPromotions);
+
+													if( promocionesPosibles.length > 0 
+													&& vm.convivencia.existentPromotions.length > 0 ){
+
+														for( var promocion of promocionesPosibles ){
+															for( var existePromotion of vm.convivencia.existentPromotions ){
+
+																if( existePromotion.PromocionConvive__c 
+																&& ( existePromotion.PromocionConvive__c == promocion.Id ) ){
+
+																	vm.convivencia.choosedPromotions.push({
+																		Id: existePromotion.PromocionConvive__c,
+																		Name: existePromotion.PromocionConvive__r.Promocion__r.Name,
+																		IdConvivencia: existePromotion.Id,
+																		// enable: promocion.enable
+																		enable: editable
+																	});
+
+																}
+
+															}
+				
+														}
+													
+														if( vm.convivencia.choosedPromotions.length > 0){
+
+															for( var promocion of promocionesPosibles ){
+
+																var itemPromocion = vm.convivencia.choosedPromotions.filter(function(item) {
+																  return item.Id === promocion.Id;
+																	 
+																});
+
+																if( itemPromocion.length == 0 ){
+																	// vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: promocion.enable});
+																	vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: true});
+																}
+																
+															}
+
+														}else{
+
+															for( var promocion of promocionesPosibles ){
+																// vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: promocion.enable});
+																vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: true});
+															}
+
+														}
+														
+														console.log(FUNC_NAME + ' | vm.convivencia.choosedPromotions:', vm.convivencia.choosedPromotions);
+													}
+
+												}
+
+											}else if( result1.state == 'Null' ){
+
+												console.log('No hay convivencias existentes.');
+												
+												for( var promocion of promocionesPosibles ){
+													// vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: promocion.enable});
+													vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: true});
+												}
+
+											}else if( result1.state == 'Exception' ){
+
+												RequestFactory.toastMessageDanger(result1.response);
+
+											}
+
+										});
+
+										//Validad Existentes
+
+									}else if( result.state == 'Exception' ){
+
+										RequestFactory.toastMessageDanger(result.response);
+
+									}
+
+							});
+
+						}
+						
+						convivenciaPromocionesModal().result.then(function (data) {
+							$scope.handleSuccess(data);
+						})
+						.then(null, function (reason) {});
+					};
+
+					/*Open Convicencia descuentos*/
+					function openConvivenciaDescuentosModal(promotion, editable){
+						const FUNC_NAME = 'openConvivenciaDescuentosModal()';
+						console.log(FUNC_NAME);
+						vm.convivencia.availablePromotions = [];
+						vm.convivencia.choosedPromotions = [];
+						vm.convivencia.existentPromotions = [];
+						vm.convivencia.promotionPadre = {};
+						vm.convivencia.tipo = 'Descuento';
+
+						console.log('promoElegida:',promotion);
+
+						if( promotion.Promocion__r.AcumularDescuentos__c 
+						&& promotion.Promocion__r.AcumularDescuentos__c == true ){
+
+							vm.convivencia.promotionPadre = {Id: promotion.Id , Name: promotion.Promocion__r.Name, Editable: editable};
+
+							var promocionesPosibles = [];
+
+							RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getPromocionesConvivencias}',
+								promotion.Periodo__c,
+								promotion.Modalidad__c,
+								promotion.Plantel__c,
+								promotion.Nivel__c,
+								promotion.Programa__c,
+								promotion.Letra__c,
+								promotion.Promocion__r.NombreConcepto__r.Name,
+								'Descuento').then(result =>{
+									console.log('$$$$ result'+ result.state);
+									if( result.state == 'Success'){
+										console.log('$$$$ ENTRÉ RESULT SUCESS');
+										console.log('getPromocionesConvivenciasDESC:',result.data);
+
+										for( var promo of result.data){
+
+											// if( promo.editable 
+											// && promo.promocion.Promocion__r.Estatus__c == 'Activo' 
+											// && promo.promocion.Id != promotion.Id 
+											// && promo.promocion.Promocion__r.AcumularDescuentos__c == true ){
+											if((promo.promocion.Promocion__r.Estatus__c == 'Activo') && (promo.promocion.Id != promotion.Id) && (promo.promocion.Promocion__r.AcumularDescuentos__c == true)) {
+												
+												console.log('$$$$ Entré Promocionesfor')
+												promocionesPosibles.push({Id: promo.promocion.Id, Name: promo.promocion.Promocion__r.Name, enable: promo.editable});   
+												
+												console.log('$$$$ promocionesPosibles', promocionesPosibles);
+
+											}
+											
+										}
+
+										//Validar Existentes
+										
+										RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getPromotionConvivencia}',promotion.Id,vm.convivencia.tipo).then(result1 => {
+
+											console.log('$$$$  result1.state' +  result1.state);
+											if( result1.state == 'Success' ){
+												console.log('$$$$  Entré segundo status');
+												if( result1.data.length > 0 ){
+													console.log('$$$$  result1.data' , result1.data);
+													vm.convivencia.existentPromotions = result1.data;
+													console.log('ConvivenciasDESC existentes:',vm.convivencia.existentPromotions);
+
+													if( promocionesPosibles.length > 0 
+													&& vm.convivencia.existentPromotions.length > 0 ){
+
+														for( var promocion of promocionesPosibles ){
+															for( var existePromotion of vm.convivencia.existentPromotions ){
+
+																if( existePromotion.PromocionConvive__c 
+																&& ( existePromotion.PromocionConvive__c == promocion.Id ) ){
+
+																	vm.convivencia.choosedPromotions.push({
+																		Id: existePromotion.PromocionConvive__c,
+																		Name: existePromotion.PromocionConvive__r.Promocion__r.Name,
+																		IdConvivencia: existePromotion.Id,
+																		// enable: promocion.enable
+																		enable: editable
+																	});
+
+																}
+
+															}
+				
+														}
+
+													
+														if( vm.convivencia.choosedPromotions.length > 0){
+
+															for( var promocion of promocionesPosibles ){
+
+																var itemPromocion = vm.convivencia.choosedPromotions.filter(function(item) {
+																  return item.Id === promocion.Id;
+																	 
+																});
+
+																if(itemPromocion.length == 0){
+																	// vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: promocion.enable});
+																	vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: true});
+																}
+																
+															}
+
+														}else{
+
+															for( var promocion of promocionesPosibles ){
+																// vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: promocion.enable});
+																vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: true});
+															}
+
+														}
+													}
+
+												}else{
+
+													console.log('No hay ConvivenciasDESC existentes.');
+															
+														vm.convivencia.availablePromotions = promocionesPosibles;
+
+												}
+											}else if( result1.state == 'Null' ){
+
+												console.log('No hay convivencias existentes.');
+															
+												for( var promocion of promocionesPosibles ){
+													// vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: promocion.enable});
+													vm.convivencia.availablePromotions.push({Id: promocion.Id, Name: promocion.Name, enable: true});
+												}
+											}else if( result1.state == 'Exception' ){
+												console.log('$$$$  Entré mensaje ' + result1.response);
+												RequestFactory.toastMessageDanger(result1.response);
+
+											}
+
+										});
+
+										//Validad Existentes
+
+
+									}else if( result.state == 'Exception' ){
+
+										RequestFactory.toastMessageDanger(result.response);
+										console.log('$$$$  Entré mensaje ELSE IF ' + result1.response);
+									}
+								});
+
+						}
+												
+						convivenciaPromocionesModal().result.then(function (data) {
+							$scope.handleSuccess(data);
+						})
+						.then(null, function (reason) {});
+
+					};
+
+					//Save Convivencia Promociones
+					function saveConvivenciaPromocionesModal(){
+
+						var jsonParam = [];
+
+						console.log('choosedPromotions:',vm.convivencia.choosedPromotions);
+
+						angular.forEach(vm.convivencia.choosedPromotions, function(value, key){
+							
+							if( value.IdConvivencia && value.IdConvivencia.length > 0 ){
+
+								jsonParam.push({
+									Id: value.IdConvivencia,
+									Promocion__c: vm.convivencia.promotionPadre.Id,
+									PromocionConvive__c: value.Id
+								});
+
+							}else{
+
+								jsonParam.push({
+										Promocion__c: vm.convivencia.promotionPadre.Id,
+										PromocionConvive__c: value.Id
+								});
+							}
+
+						});
+
+						console.log('jsonParam:',jsonParam);
+
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.upsertPromotionConvivencia}',jsonParam,vm.convivencia.existentPromotions,vm.convivencia.tipo,vm.convivencia.promotionPadre.Id)
+						.then(result => {
+							
+							if( result.state == 'Success' ){
+
+								RequestFactory.toastMessageSuccess('Convivencia guardada correctamente.');
+								closeConvivenciaPromocionesModal();
+
+							}else if( result.state == 'Exception' ){
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}
+
+
+						});
+
+					};
+
+					//Close Convivencia Promociones
+					function closeConvivenciaPromocionesModal() {
+						vm.convivencia = {};
+						$scope.modalConvivenciaPromociones.dismiss('Cancel');
+						// setTimeout(() => $scope.modalConvivenciaPromociones.dismiss('Cancel'), 1500);
+					}
+
+					/*Convivencia Promociones Params*/
+					var aplicaPromocionesModal = function(){
+						return $scope.modalAplicaPromociones = $uibModal.open({
+							templateUrl: 'aplicaPromociones.html',
+							windowClass: 'show aplicar-promocion-fit-content',
+							size: 'lg',
+							scope: $scope,
+							backdrop: 'static'
+						});
+					};
+
+					/*Open Alica Promociones*/
+					function openAplicarPromocionModal(configuracion){
+
+						console.log('openAplicarPromocionModal:',configuracion);
+						vm.configuradorPromocionId = '';
+						vm.configuradorPromocionId = configuracion.Id;
+						vm.promoElegida = configuracion.Promocion__r;
+
+						loadDataAplicarPromotion(configuracion);
+
+						aplicaPromocionesModal().result.then(function (data) {
+							$scope.handleSuccess(data);
+						})
+						.then(null, function (reason) {});
+
+					};
+					//PRO_AgregarPromocion
+					//Get Data of Promotion and Ofertas Educativas
+					function loadDataAplicarPromotion(configuracion){
+						const FUNC_NAME = 'loadDataAplicarPromotion()';
+						console.log(FUNC_NAME + ' | configuracion:', configuracion);
+						//No.Descuentos
+						vm.noDescuentos = [];
+						
+						vm.aplicarPromocion.Promocion = vm.promoElegida;
+						vm.aplicarPromocion.CantidadPago__c = configuracion.CantidadPago__c;
+						vm.aplicarPromocion.Promocion.CantidadPago__c = configuracion.Promocion__r.CantidadPago__c;
+						vm.aplicarPromocion.filtros = configuracion;
+						
+						console.log(FUNC_NAME + ' | vm.aplicarPromocion:', vm.aplicarPromocion);
+						
+						for(var i = 1; vm.aplicarPromocion.CantidadPago__c >= i ; i++ ){
+							var varPorcentaje = 0;
+							var varImporte = 0;
+							//RJP: Si es pago unico, se copian los valores a los descuentos automáticamente 
+							if(configuracion.Promocion__r.PagoUnico__c){
+								varPorcentaje = configuracion.Promocion__r.PorcentajeDescuento__c;
+								varImporte = configuracion.Promocion__r.ImporteConcepto__c;
+							}
+							vm.noDescuentos.push({NoPago: i, Porcentaje: varPorcentaje, ImporteCantidad: varImporte,Concepto: vm.aplicarPromocion.Promocion.Name});
+						}
+						//RJP
+						console.log('vm.noDescuentos.length::',vm.noDescuentos.length);
+						/*if(vm.noDescuentos.length == 1){
+							vm.asignarPromocion.NOEditable = true;
+						}*/
+						//No.Descuentos
+						var cantidadPagosOE = '';
+						var conceptoNombre = '';
+
+						if( vm.aplicarPromocion.Promocion.NombreConcepto__r.Name == 'Colegiatura' 
+						|| vm.aplicarPromocion.Promocion.NombreConcepto__r.Name == 'Reinscripción'){
+
+							conceptoNombre = vm.aplicarPromocion.Promocion.NombreConcepto__r.Name;
+							cantidadPagosOE = vm.aplicarPromocion.CantidadPago__c;
+
+						}
+
+						//OfertasEducativas
+						RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getOfertasEducativasPromotion}',
+							configuracion.Periodo__c,
+							configuracion.Modalidad__c,
+							configuracion.Plantel__c,
+							configuracion.Nivel__c,
+							configuracion.Programa__c,
+							conceptoNombre,
+							cantidadPagosOE).then(result => {
+
+							if(result.state == 'Success'){
+								
+								vm.aplicarPromocion.OfertaEducativa = [];
+								vm.aplicarPromocion.OfertaEducativa = result.data;
+
+								angular.forEach(vm.aplicarPromocion.OfertaEducativa, function(value, key){
+									
+									value.aplicarPromocion = false;
+									value.pagos = [];
+
+								});
+
+								RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.getOEPromotionDescuento}')
+								.then(resultOEPD => {
+									
+									if(resultOEPD.state == 'Success') {
+
+										if(resultOEPD.data && resultOEPD.data.length > 0){
+
+											console.log('getOEPromotionDescuento:', resultOEPD.data);
+											console.log('vm.aplicarPromocion.OfertaEducativa:', vm.aplicarPromocion.OfertaEducativa);
+											console.log('vm.configuradorPromocionId:', vm.configuradorPromocionId);
+											angular.forEach(vm.aplicarPromocion.OfertaEducativa, function(valueOEP, keyOEP){
+
+												angular.forEach(resultOEPD.data, function(valueR, keyR){
+
+													if(valueR.Promocion__r 
+													&& valueR.Promocion__r.PromocionConfigurada__r 
+													&& valueR.Promocion__r.PromocionConfigurada__r.Promocion__c){
+
+														if((valueR.Promocion__r.PromocionConfigurada__c == vm.configuradorPromocionId) 
+														&& (valueR.Promocion__r.Grupo__c == valueOEP.Id ) 
+														&& (valueR.Promocion__r.OfertaEducativa__c == valueOEP.OfertaEducativa__c )){
+
+															valueOEP.nombreConcepto = valueR.Promocion__r.PromocionConfigurada__r.Promocion__r.Name;
+															valueOEP.oePromocionId = valueR.Promocion__c;
+															
+															valueOEP.pagos.push({
+																Id: valueR.Id,
+																NoPago: valueR.NumeroPago__c,
+																Porcentaje: valueR.PorcentajeDescuento__c
+															});
+
+														}
+
+													}
+
+												});
+
+											});
+
+										}
+
+									}else if( resultOEPD.state == 'Exception' ){
+
+										RequestFactory.toastMessageDanger(resultOEPD.response);
+
+									}
+									
+								});
+
+							}else if( result.state == 'Exception' ){
+
+								RequestFactory.toastMessageDanger(result.response);
+
+							}
+
+						});
+						//OfertasEducativas 
+						
+					};
+
+					//Verifica que los descuentos sean igual al descuento total
+					function validarDescuento(){
+
+						vm.totalPorcentaje = 0;
+
+						angular.forEach(vm.noDescuentos, function(value, key){
+							vm.totalPorcentaje += parseInt(value.Porcentaje);
+						});
+
+						vm.porcentajeTotalDiferente = ( vm.totalPorcentaje != vm.aplicarPromocion.Promocion.PorcentajeDescuento__c) ? false : true;
+					};
+
+					function aplicarATodos(){
+						const FUNC_NAME = 'aplicarATodos() | ';
+						angular.forEach(vm.aplicarPromocion.OfertaEducativa, function(value, key){
+							
+							value.nombreConcepto = vm.aplicarPromocion.Promocion.Name;
+							value.promocionId = vm.configuradorPromocionId;
+							
+							if( value.pagos && value.pagos.length > 0 ){
+								console.log(FUNC_NAME + '1');
+									console.log('entro a pagos',value.pagos.length);
+
+									var pagosMemory = [];
+
+									angular.forEach(vm.noDescuentos, function(valueP, keyP){
+										
+										var oePDId = value.pagos[keyP].Id;
+
+										pagosMemory.push({
+											Id: oePDId,
+											NoPago: valueP.NoPago,
+											Porcentaje: valueP.Porcentaje,
+											ImporteCantidad: valueP.ImporteCantidad
+										});
+
+									});
+
+									value.pagos = [];
+									value.pagos = pagosMemory;
+									
+									RequestFactory.toastMessageSuccess('Promoción aplicada correctamente');
+									
+							}else{
+								console.log(FUNC_NAME + '2');
+								value.pagos = [];
+
+								for(var noDesc of vm.noDescuentos){
+									value.pagos.push(noDesc);
+								}
+								
+								RequestFactory.toastMessageSuccess('Promoción aplicada correctamente');
+								
+							}
+						});
+						console.log(FUNC_NAME + ' | vm.aplicarPromocion.OfertaEducativa:', vm.aplicarPromocion.OfertaEducativa);
+					};
+
+					function aplicarASeleccionados() {
+						const FUNC_NAME = 'aplicarASeleccionados()';
+						console.log(FUNC_NAME + ' | vm.aplicarPromocion.OfertaEducativa:', vm.aplicarPromocion.OfertaEducativa);
+						angular.forEach(vm.aplicarPromocion.OfertaEducativa, function(value, key) {
+							if (value.aplicarPromocionCheck === true) {
+
+								value.nombreConcepto = vm.aplicarPromocion.Promocion.Name;
+								value.promocionId = vm.configuradorPromocionId;
+
+								if(value.pagos && value.pagos.length > 0){
+
+									var pagosMemory = [];
+
+									angular.forEach(vm.noDescuentos, function(valueP, keyP){
+										var oePDId = value.pagos[keyP].Id;
+
+										pagosMemory.push({
+											Id: oePDId,
+											NoPago: valueP.NoPago,
+											Porcentaje: valueP.Porcentaje,
+											ImporteCantidad: valueP.ImporteCantidad
+										});
+
+									});
+
+									value.pagos = [];
+									value.pagos = pagosMemory;
+									
+									RequestFactory.toastMessageSuccess('Promoción aplicada correctamente');
+									
+								}else{
+
+									value.pagos = [];
+
+									angular.forEach(vm.noDescuentos, function(valueP, keyP){
+										value.pagos.push(valueP);
+									});
+									
+									RequestFactory.toastMessageSuccess('Promoción aplicada correctamente');
+									
+								}
+
+							}
+						});
+					};
+
+					function quitarTodos() {
+						const FUNC_NAME = 'quitarTodos()';
+						vm.oePromotionsToDelete = [];
+
+						angular.forEach(vm.aplicarPromocion.OfertaEducativa, function(value, key){
+
+							value.nombreConcepto = '';
+							value.promocionId = '';
+							
+							if (value.pagos.length > 0) {
+								value.pagos = [];
+								RequestFactory.toastMessageSuccess('Promoción desaplicada correctamente');
+							}
+							
+							if(value.oePromocionId && value.oePromocionId.length > 0){
+
+								vm.oePromotionsToDelete.push({Id: value.oePromocionId});
+								
+							}
+							
+						});
+						console.log(FUNC_NAME + ' | vm.oePromotionsToDelete:', vm.oePromotionsToDelete);
+					};
+
+					function quitarSeleccionados (){
+
+						vm.oePromotionsToDelete = [];
+
+						angular.forEach(vm.aplicarPromocion.OfertaEducativa, function(value, key){
+
+							if(value.aplicarPromocionCheck == true){
+
+								value.nombreConcepto = '';
+								value.promocionId = '';
+								
+								if (value.pagos.length > 0) {
+									value.pagos = [];
+									RequestFactory.toastMessageSuccess('Promoción desaplicada correctamente');
+								}
+								
+								if(value.oePromocionId && value.oePromocionId.length > 0){
+
+									vm.oePromotionsToDelete.push({Id: value.oePromocionId});
+									
+								}
+
+							}
+							
+						});
+
+					};
+
+					/*Guardar Las Promociones Conjuntas*/
+					function saveAplicarPromocionModal(){
+						const FUNC_NAME = 'saveAplicarPromocionModal()';
+						var jsonOE = [];
+						
+						console.log(FUNC_NAME + ' | vm.aplicarPromocion.OfertaEducativa:', vm.aplicarPromocion.OfertaEducativa);
+						
+						angular.forEach(vm.aplicarPromocion.OfertaEducativa, function(value, key){
+
+							if(value.nombreConcepto && value.promocionId && value.pagos.length > 0){
+
+								if(value.oePromocionId && value.oePromocionId.length > 0){
+									
+									jsonOE.push({Id: value.oePromocionId,PromocionConfigurada__c: value.promocionId,OfertaEducativa__c: value.OfertaEducativa__c,Grupo__c: value.Id});  
+									console.log('$$$$ jsonOE IF',  jsonOE);
+
+								}else{
+
+									jsonOE.push({PromocionConfigurada__c: value.promocionId,OfertaEducativa__c: value.OfertaEducativa__c,Grupo__c: value.Id});
+									console.log('$$$$ jsonOE ELSE',  jsonOE);
+								}
+
+							}
+							
+						});
+						
+						console.log(FUNC_NAME + ' | jsonOE:',jsonOE);
+						
+						if(jsonOE.length > 0){
+
+							RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.upsertOEPromotion}',JSON.stringify(jsonOE))
+								.then(resultOE => {
+
+								if(resultOE.state == 'Success'){
+									
+									// RequestFactory.toastMessageSuccess('Promoción aplicada correctamente');
+
+									var jsonOEPromocionDescuento = [];
+
+									if(resultOE.response && resultOE.response.length > 0){
+
+										angular.forEach(resultOE.response, function(valueR, keyR){
+											
+											angular.forEach(vm.aplicarPromocion.OfertaEducativa, function(valueOEP, keyOEP){
+											
+												if((valueR.PromocionConfigurada__c == valueOEP.promocionId) 
+												&& (valueR.Grupo__c == valueOEP.Id ) 
+												&& (valueR.OfertaEducativa__c == valueOEP.OfertaEducativa__c )){
+
+													if(valueOEP.pagos && valueOEP.pagos.length > 0){
+
+														angular.forEach(valueOEP.pagos, function(valueP, keyP){
+
+															if(valueP.Id && valueP.Id.length > 0){
+
+																jsonOEPromocionDescuento.push({
+																	Id: valueP.Id,
+																	Promocion__c: valueR.Id,
+																	NumeroPago__c: valueP.NoPago,
+																	PromocionConfigurada__c: valueR.Id,
+																	PorcentajeDescuento__c: parseInt(valueP.Porcentaje),
+																	Importe__c: valueP.ImporteCantidad,
+																	ImporteTotal__c: vm.aplicarPromocion.Promocion.ImporteConcepto__c
+																});
+
+															}else{
+
+																jsonOEPromocionDescuento.push({
+																	Promocion__c: valueR.Id,
+																	NumeroPago__c: valueP.NoPago,
+																	PromocionConfigurada__c: valueR.Id,
+																	PorcentajeDescuento__c: parseInt(valueP.Porcentaje),
+																	Importe__c: valueP.ImporteCantidad,
+																	ImporteTotal__c: vm.aplicarPromocion.Promocion.ImporteConcepto__c
+																});
+
+															}
+														});
+
+													}
+
+												}
+
+											});
+
+										});
+
+										if(jsonOEPromocionDescuento.length > 0){
+
+											console.log('jsonOEPromocionDescuento:',jsonOEPromocionDescuento);
+
+											RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.upsertOEPromotionDescuento}',JSON.stringify(jsonOEPromocionDescuento)).then(resultOEPD => {
+
+												if(resultOEPD.state == 'Success'){
+
+													console.log('Guardo upsertOEPromotionDescuento:',resultOEPD);
+
+													RequestFactory.toastMessageSuccess('Guardado correctamente');
+													
+													console.log(FUNC_NAME + ' | vm.oePromotionsToDelete:', vm.oePromotionsToDelete);
+													
+													if(vm.oePromotionsToDelete.length > 0){
+
+														RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.deleteOEPromotion}',JSON.stringify(vm.oePromotionsToDelete)).then(resultD => {
+
+															if(resultD.state == 'Success'){
+																console.log(FUNC_NAME + ' | i\'m in');
+																RequestFactory.toastMessageSuccess('Se quito correctamente la promoción');
+																closeAplicarPromocionModal();
+
+															}else if(resultD.state == 'Exception'){
+
+																RequestFactory.toastMessageDanger(resultD.response);
+																loadDataAplicarPromotion(vm.aplicarPromocion.filtros);
+															}
+															
+														});
+
+													}else{
+														loadDataAplicarPromotion(vm.aplicarPromocion.filtros);
+														closeAplicarPromocionModal();
+													}
+												}else if(resultOEPD.state == 'Exception'){
+
+													RequestFactory.toastMessageDanger(resultOEPD.response);
+
+												}
+
+											});
+
+										}
+
+									}
+
+								}else if(resultOE.state == 'Exception'){
+									RequestFactory.toastMessageDanger(resultOE.response);
+								}
+
+							});
+						} else if ((jsonOE.length === 0) && (vm.oePromotionsToDelete.length > 0)) {
+							RequestFactory.remoteCall('{!$RemoteAction.PRO_PromocionesCtrl.deleteOEPromotion}', JSON.stringify(vm.oePromotionsToDelete))
+								.then(resultD => {
+									if (resultD.state === 'Success') {
+										RequestFactory.toastMessageSuccess('Se quito correctamente la promoción');
+										closeAplicarPromocionModal();
+									} else if (resultD.state === 'Exception') {
+										RequestFactory.toastMessageDanger(resultD.response);
+										loadDataAplicarPromotion(vm.aplicarPromocion.filtros);
+									}
+								});
+						} else {
+							RequestFactory.toastMessageSuccess('No hay cambios que guardar');
+						}
+						
+					};
+
+					function closeAplicarPromocionModal() {
+
+						vm.aplicarPromocion = {};
+						vm.noDescuentos = [];
+						vm.totalPorcentaje = 0;
+						vm.porcentajeTotalDiferente = true;
+						vm.oePromotionsToDelete = [];
+						vm.promoElegida = {};
+						vm.configuradorPromocionId = '';
+
+						$scope.modalAplicaPromociones.dismiss('Cancel');
+
+					}
+					
+				});
+
+			$(".tablePromotionTopScrollParent").scroll(function () {
+				$(".tableDIVPromotionTopScroll").scrollLeft($(".tablePromotionTopScrollParent").scrollLeft());
+			});
+
+			$(".tableDIVPromotionTopScroll").scroll(function () {
+				$(".tablePromotionTopScrollParent").scrollLeft($(".tableDIVPromotionTopScroll").scrollLeft());
+			});
+
+			$(".tableAplicarPromotionTopScrollParent").scroll(function () {
+				$(".tableDIVAplicarPromotionTopScroll").scrollLeft($(".tableAplicarPromotionTopScrollParent").scrollLeft());
+			});
+			
+			$(".tableDIVAplicarPromotionTopScroll").scroll(function () {
+				$(".tableAplicarPromotionTopScrollParent").scrollLeft($(".tableDIVAplicarPromotionTopScroll").scrollLeft());
+			});
+
+			</script>
+
+			<script type="text/ng-template" id="askPromotion.html">
+				<div class="modal-header">
+					<h3 class="modal-title" >Advertencia</h3>
+				</div>
+				<div class="modal-body" >
+					Al cambiar algún campo de Periodo, Modalidad, Plantel, Nivel, Programa, Letra,Concepto ó Cantidad de Pagos, ocasionara que se asigne la promoción a los nuevos parametros y se pierdan los datos de los anteriores.(Ofertas Educativas,Convivencias) <br/> ¿Esta de acuerdo con esto ?
+				</div>
+				<div class="modal-footer">
+
+					<button class="btn btn-success" type="button" ng-click="pro.aceptarGuardarPromocion()" >Si</button>
+
+					<button class="btn btn-danger" type="button" ng-click="pro.closeAskPromotion()" >No</button>
+
+				</div>
+			</script>
+
+			<script type="text/ng-template" id="deleteConfig.html">
+				<div class="modal-header">
+					<h3 class="modal-title" >Advertencia</h3>
+				</div>
+				<div class="modal-body" >
+					¿Desea borrar la configuración de promoción?
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-success" type="button"  ng-click="pro.aceptarDeleteConfigPromotion()" >Eliminar</button>
+					<button class="btn btn-danger" type="button"  ng-click="pro.closedeleteConfigPromotion()" >Cancelar</button>
+				</div>
+			</script>
+			
+			<script type="text/ng-template" id="paymentsDiscountsPerGroup.html">
+				<div class="modal-header">
+					<h3 class="modal-title">Pagos y Descuentos</h3>
+				</div>
+				<div class="modal-body" >
+					<div class="table-responsive">
+						<table class="table tablePromotionBorder centrado">
+								<tbody>
+								<tr>
+									<th>No. Pago</th>
+									<th ng-repeat="descuento in pro.noDescuentos" id={{descuento}}>
+										{{descuento.NoPago}}
+									</th>
+								</tr>
+								<tr>
+									<th>Importe</th>
+									<th ng-repeat="descuento in pro.noDescuentos">
+										
+										<input type="text" 
+											class="slds-input text-right" 
+											name="importeConcepto" 
+											ng-model="descuento.ImporteCantidad" 
+											ctc-format-number="currency" 
+											ctc-min-number="0" 
+											ctc-field="{precision:12,scale:2,type:'currency', decimalsView:2}"
+											ng-disabled="pro.asignarPromocion.NOEditable || pro.aplicarPromocion.Promocion.PagoUnico__c"
+											required="" />
+										
+									</th>
+								</tr>
+								<tr>
+									<th>No. Descuento</th>
+									<th ng-repeat="descuento in pro.noDescuentos" id={{descuento}}>
+										{{descuento.NoPago}}
+									</th>
+								</tr>
+								<tr>
+									<th>Descuento</th>
+									<th ng-repeat="descuento in pro.noDescuentos">
+										<input type="text" class="slds-input text-right" name="descuentoConcepto" ng-model="descuento.Porcentaje" 
+													ctc-format-number="currency" 
+													ctc-min-number="0" 
+													ctc-max-number="100" 
+													ctc-field="{precision:12,scale:0,type:'percent', decimalsView:0}" 
+													ng-change="pro.validarDescuento()"
+													ng-disabled="pro.asignarPromocion.NOEditable || pro.aplicarPromocion.Promocion.PagoUnico__c"/>
+									</th>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-success" type="button" ng-click="">Guardar</button>
+					<button class="btn btn-danger" type="button" ng-click="">Cancelar</button>
+				</div>
+			</script>
+			
+
+		</body>
+
+	</html>
+
+</apex:page>

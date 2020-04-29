@@ -1,0 +1,821 @@
+<apex:component >
+		<script type="text/ng-template" id="addNewPromotion.html">
+	<!-- START ********** Row Add Promotion Section ********** -->
+				<div class="modal-header">
+						<h3 class="modal-title" ng-if="!pro.asignarPromocion.isGranted">Agregar Promoción</h3>
+						<!-- {{pro.asignarPromocion.isGranted}} -->
+						<h3 ng-if="pro.asignarPromocion.isGranted">Esta promoción ha sido otorgada</h3>
+				</div>
+
+				<form name="addPromotionForm">
+
+					<div class="modal-body" >
+
+						<!--START First Section -->
+						<div class="container">
+						
+						<!--START First row Nombre Promocion & Aplica con otras promociones -->
+						<div class="row rowPromotion">
+
+							<div class="col-4">
+
+								<div class="row">
+								
+									<div class="form-group row">
+
+										<label for="inlineFormInputPeriod" class="col-md-5 col-form-label col-form-label-sm">Nombre Promoción</label>
+
+										<div class="col-md-7">
+
+											<input type="text" class="form-control"
+												name="namePromocion"
+												style="width: 113%;"
+												placeholder="-"
+												ng-model="pro.asignarPromocion.nombrePromocion"
+												ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted"
+												required="">
+											<div ng-messages="addPromotionForm.namePromocion.$error">
+													<div ng-message="required" class="requiredInput">Requerido*</div>
+											</div>
+											
+										</div>
+
+									</div>
+									
+								</div>
+
+								<div class="row">
+									
+									<div class="form-group row">
+
+										<label for="inlineFormInputPeriod" class="col-sm-5 col-form-label col-form-label-sm">Fecha Inicio de Vigencia</label>
+
+										<div class="col-sm-7">
+
+											<!-- <input id="fInicioVigencia"
+											type="date" 
+											class="form-control form-control-sm" 
+											name="inicioVigencia"
+										style="width: 113%;" 
+											ng-model="pro.asignarPromocion.fechaInicioVigencia" 
+											ng-change="pro.verificarFechaFin(addPromotionForm)"
+											ng-disabled="pro.asignarPromocion.NOEditable"
+											required="">	-->
+
+											<input id="fInicioVigencia"
+											type="date" 
+											class="form-control form-control-sm" 
+											name="inicioVigencia"
+										style="width: 113%;" 
+											ng-model="pro.asignarPromocion.fechaInicioVigencia" 
+											ng-change="pro.verificarFechaFin(addPromotionForm)"
+											ng-disabled="false || pro.asignarPromocion.isGranted"
+											required="">
+
+											<div ng-messages="addPromotionForm.inicioVigencia.$error">
+													<div ng-message="required" class="requiredInput">Requerido*</div>
+											</div>
+											
+										</div>
+
+									</div>
+
+								</div>
+
+								<div class="row">
+									
+									<div class="form-group row">
+
+										<label for="inlineFormInputPlantel" class="col-sm-5 col-form-label col-form-label-sm">Fecha Fin de Vigencia</label>
+
+										<div class="col-sm-7">
+
+											<!-- <input id="fFinVigencia"
+											type="date" 
+											class="form-control form-control-sm" 
+											name="finVigencia"
+										style="width: 113%;" 
+											ng-model="pro.asignarPromocion.fechaFinVigencia" 
+											ng-change="pro.verificarFechaFin(addPromotionForm)"
+										
+											required=""> -->
+								
+										<input id="fFinVigencia"
+											type="date" 
+											class="form-control form-control-sm" 
+											name="finVigencia"
+										style="width: 113%;" 
+											ng-model="pro.asignarPromocion.fechaFinVigencia" 
+											ng-change="pro.verificarFechaFin(addPromotionForm)"
+										ng-disabled="false"
+											required="">
+
+
+											<div ng-messages="addPromotionForm.finVigencia.$error">
+													<div ng-message="required" class="requiredInput">Requerido* </div>
+													<div ng-if="pro.finVigenciaMSG != ''" class="requiredInput">{{pro.finVigenciaMSG}}</div>
+											</div>
+
+										</div>
+
+									</div>
+
+								</div>
+
+							</div>
+
+							<div class="col-4">
+								
+								<div class="form-group ">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputModality" class="col-sm-12 col-form-label col-form-label-sm">
+											<input type="checkbox" 
+											name="otrasPromociones" 
+											ng-model="pro.asignarPromocion.aplicaOtrasPromociones" ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted"> Aplica con otras promociones
+										</label>
+
+									</div>
+
+								</div>
+
+								<div class="form-group ">
+
+									<div class="col-12">
+
+											<label for="inlineFormInputModality" class="col-sm-12 col-form-label col-form-label-sm">
+												<input type="checkbox" 
+												name="acumulableDescuentos" 
+												ng-model="pro.asignarPromocion.acumularDescuentos" 
+												ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted">  Acumulable con otros descuentos
+											</label>
+
+									</div>
+
+								</div>
+
+								<div class="form-group ">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputNivel" class="col-sm-12 col-form-label col-form-label-sm">
+											<input type="checkbox" 
+											name="requiereAutorizacion" 
+											ng-model="pro.asignarPromocion.requiereAutorizacion" ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted">  Requiere Autorización
+										</label>
+
+									</div>
+
+								</div>
+
+							</div>
+
+							<div class="col-4">
+								
+								<div class="form-group ">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputDisponibleLandingPage" class="col-sm-12 col-form-label col-form-label-sm">
+											<input type="checkbox" 
+											name="disponibleLandingPage" 
+											ng-model="pro.asignarPromocion.disponibleLandingPage"
+											ng-disabled="pro.asignarPromocion.isGranted">  Disponible en Landing Page
+										</label>
+									</div>
+
+								</div>
+
+								<div class="form-group ">
+
+									<div class="col-12">
+
+											<label for="inlineFormInputDisponibleEjecutivo" class="col-sm-12 col-form-label col-form-label-sm">
+												<input type="checkbox" 
+												name="disponibleEjecutivo" 
+												ng-model="pro.asignarPromocion.disponibleEjecutivo"
+												ng-disabled="pro.asignarPromocion.isGranted">  Disponible Ejecutivo
+											</label>
+
+									</div>
+
+								</div>
+
+								<div class="form-group ">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputFichaPago" class="col-sm-12 col-form-label col-form-label-sm">
+											<input type="checkbox" 
+											name="mostrarFichaPago" 
+											ng-model="pro.asignarPromocion.mostrarFichaPago"
+											ng-disabled="pro.asignarPromocion.isGranted">  Mostrar en Ficha Pago
+										</label>
+
+									</div>
+
+								</div>	
+
+								<div class="form-group ">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputFichaPago" class="col-sm-12 col-form-label col-form-label-sm">
+											<input type="checkbox" 
+											name="mostrarFichaPago" 
+											ng-model="pro.asignarPromocion.mostrarImporteLeadOportunidad"
+											ng-disabled="pro.asignarPromocion.isGranted">  Mostrar importe en Lead/Oportunidad
+										</label>
+
+									</div>
+
+								</div>
+							</div>
+
+							</div>
+						<!--END First row Nombre Promocion & Aplica con otras promociones -->
+					<!--END First Section -->
+					<!--START Second Section -->
+					<!-- First row Filters -->
+						<div class="card text-center" id="cardOffertaEducativa">
+							<div class="card-header">
+								Oferta educativa
+						 </div>
+						 <div class="card-body">
+						 	<div class="row" ng-if="pro.persistirDatos.editando">
+						 		<div class="col-md-12 nopadding" >
+									<p class="card-text text-center text-warning" >Esta sección sólo es informativa. Si se requiere editar la promoción a la oferta edcuativa, se debe de realizar en la pantalla principal</p>
+									</div>
+						 	</div>
+								<div class="row">
+									<!-- Periodo -->
+									<div class="col">
+										
+										<div class="form-group row">
+
+											<div class="col-sm-12">
+
+													<label for="inlineFormInputPeriod" class="">Periodo</label>
+
+																	<select class="form-control form-control-sm" 
+																	name="periodoPromocion"
+																		ng-options="optionPeriod as optionPeriod.Name for optionPeriod in pro.filterAddPromotion.filterListPeriod"
+																		ng-model="pro.filterAddPromotion.filterPeriod" 
+																		ng-change="pro.getModalityByPeriodAddPromotion(pro.filterAddPromotion.filterPeriod.Id);pro.verificarFechaFin(addPromotionForm);"
+																		ng-disabled="pro.asignarPromocion.NOEditable || pro.persistirDatos.editando || true"
+																		required="">
+													</select>
+
+													<div ng-messages="addPromotionForm.periodoPromocion.$error">
+														<div ng-message="required" class="requiredInput">Requerido*</div>
+												</div>
+													
+											</div>
+
+										</div>										  	
+										
+									</div>
+									<!-- /Periodo -->
+									<!-- Modalidad -->
+									<div class="col">
+										
+										<div class="form-group row">	
+
+											<div class="col-sm-12">
+
+												<label for="inlineFormInputModality" class="">Modalidad </label>
+
+																	<select id="inlineFormInputModality" 
+																	class="form-control form-control-sm" 
+																	name="modalidadPromocion"
+																		ng-options="optionModality as optionModality.Name for optionModality in pro.filterAddPromotion.filterListModality"
+																		ng-model="pro.filterAddPromotion.filterModality" 
+																		ng-change="pro.splitPlantelbyModalityAddPromotion(pro.filterAddPromotion.filterModality.Name)" 
+																		ng-disabled="pro.asignarPromocion.NOEditable || pro.persistirDatos.editando"
+																		required=""/>
+
+																		<div ng-messages="addPromotionForm.modalidadPromocion.$error">
+														<div ng-message="required" class="requiredInput">Requerido*</div>
+												</div>
+
+											</div>
+
+										</div>										  	
+										
+									</div>
+									<!-- /Modalidad -->
+									<!-- Letra Beca -->
+									<div class="col">
+										
+										<div class="form-group row">
+
+											<div class="col-sm-12">
+
+												<label for="inlineFormInputPlantel" class="">Plantel</label>
+
+																	<select id="inlineFormCustomSelectPlantel" 
+																	class="form-control form-control-sm" 
+																	name="plantelPromocion"
+																		ng-options="optionPlantel as optionPlantel.Name for optionPlantel in pro.filterAddPromotion.filterListViewPlantel"
+																		ng-model="pro.filterAddPromotion.filterPlantel" 
+																		ng-change="pro.splitNivelbyPlantelAddPromotion(pro.filterAddPromotion.filterPlantel)" 
+																		multiple="true" 
+																		ng-disabled="pro.asignarPromocion.NOEditable || pro.persistirDatos.editando"
+											style="overflow:scroll";
+																		required=""/>
+
+																		<div ng-messages="addPromotionForm.plantelPromocion.$error">
+														<div ng-message="required" class="requiredInput">Requerido*</div>
+												</div>
+
+											</div>
+
+										</div>			    														  							  	
+									</div>
+									<!-- /Letra Beca -->
+								</div>
+								<!-- /First row Filters -->
+								<!-- Second row Filters -->
+								<div class="row">
+
+									<!-- Plantel -->
+									<div class="col">
+										
+										<div class="form-group row">
+
+											<div class="col-sm-12">
+
+												<label for="inlineFormInputNivel" class="">Nivel</label>
+
+													<select id="inlineFormCustomSelectNivel"
+														class="form-control form-control-sm"
+														name="nivelPromocion"
+														ng-options="optionNivel as optionNivel.Name for optionNivel in pro.filterAddPromotion.filterListViewNivel"
+														ng-model="pro.filterAddPromotion.filterNivel"
+														ng-change="pro.splitProgramabyNivelAddPromotion(pro.filterAddPromotion.filterNivel)"
+														multiple="true"
+														ng-disabled="pro.asignarPromocion.NOEditable || pro.persistirDatos.editando"
+														required=""/>
+
+													<div ng-messages="addPromotionForm.nivelPromocion.$error">
+													<div ng-message="required" class="requiredInput">Requerido*</div>
+													
+												</div>
+
+											</div>
+
+										</div>
+										
+									</div>
+									<!-- /Plantel -->
+
+									<!-- Nivel -->
+									<div class="col">
+										
+										<div class="form-group row">	
+
+											<div class="col-sm-12">
+
+												<label for="inlineFormInputPrograma" class="">Programa</label>
+
+													<select id="inlineFormCustomSelectPrograma"
+														class="form-control form-control-sm"
+														name="programaPromocion"
+														ng-options="optionPrograma as optionPrograma.Name for optionPrograma in pro.filterAddPromotion.filterListViewProgram"
+														ng-model="pro.filterAddPromotion.filterProgram"
+														ng-change="pro.tipoConcepto(pro.asignarPromocion.conceptoPromocion)"
+														multiple="true"
+														ng-disabled="pro.asignarPromocion.NOEditable || pro.persistirDatos.editando"
+														style="overflow:scroll;"
+														required=""/>
+
+													<div ng-messages="addPromotionForm.programaPromocion.$error">
+													<div ng-message="required" class="requiredInput">Requerido*</div>
+													
+												</div>
+
+											</div>
+
+										</div>
+										
+									</div>
+									<!-- /Nivel -->
+									<!-- Programa -->
+									<div class="col">
+										
+										<div class="form-group row">
+
+											<div class="col-sm-12">
+												<label for="inlineFormInputLetter" class="">Letra Beca</label>
+
+													<select id="inlineFormInputLetter" 
+													class="form-control form-control-sm" 
+													name="letraPromocion"
+																		ng-options="optionLetraBeca as optionLetraBeca for optionLetraBeca in pro.filterAddPromotion.filterListViewLetraBeca"
+																		ng-model="pro.filterAddPromotion.filterLetraBeca" 
+																		ng-disabled="pro.asignarPromocion.NOEditable || pro.persistirDatos.editando"
+																		multiple="true"
+																		required="" 
+																		 />
+
+																		<div ng-messages="addPromotionForm.letraPromocion.$error">
+														<div ng-message="required" class="requiredInput">Requerido*</div>
+												</div>
+
+											</div>
+
+										</div>								  	
+										
+									</div>
+									<!-- /Programa -->
+								</div>
+								<!-- /Second row Filters -->
+							</div>
+						</div>
+
+					</div>
+					<!--END Second Section -->	   
+						 	
+					
+					<!--START Third Section -->
+					<!--START Conceptos a Aplicar Section -->
+					<!-- <div class="container" ng-if="pro.promocionCreada.status == true">
+
+					<div class="panel panel-default borderPanel">
+
+							<div class="panel-heading backgroundHeader tablePromotionHeaderCenter">Conceptos a Aplicar</div>
+
+							<div class="panel-body paddingTopPanelBody">
+
+								<div class="row rowPromotion">
+
+									<div class="col-10">
+
+										<div class="table-responsive">
+
+										<table class="table tablePromotionBorder">
+
+												<thead class="backgroundHeader">
+
+													<tr>
+															<th scope="col" colspan="3" class="tablePromotionHeaderCenter">Conceptos</th>
+													</tr>
+
+												</thead>
+
+												<thead>
+
+													<tr>
+
+															<th scope="col">Nombre</th>
+															<th scope="col">No.Pagos</th>
+															<th scope="col"></th>
+													
+													</tr>
+
+												</thead>
+
+												<tbody>
+
+													<tr >
+
+															<td ng-bind="pro.conceptos.nombreConcepto"></td>
+															<td ng-bind="pro.conceptos.cantidadPago"></td>	
+															<td ><button ng-click="pro.editConceptModal(pro.conceptos)"><i class="fas fa-pencil-alt" ></i></button></td>
+
+													</tr>
+
+												</tbody>
+
+										</table>
+
+									</div>
+
+									</div>
+
+									<div class="col-2">
+
+										<div class="input-group mb-2 mr-sm-2 " ng-if="!pro.conceptos.nombreConcepto != '-'">
+
+											<div class="input-group-prepend">
+
+										 	 	<div class="input-icon-append" ng-click="pro.openAddConceptModal()"><i class="fas fa-plus-circle"></i></div>
+
+											</div>
+
+											<label class="my-1 mr-2" for="inlineFormInputAgregarPromocion">Nuevo Concepto</label>
+
+										</div>
+
+									</div>
+
+								</div>
+
+							</div>
+
+						</div>
+
+					</div> -->
+					<div class="container">  
+							<br></br>
+						<!--START First row Nombre Promocion & Aplica con otras promociones -->
+						<div class="row rowPromotion">
+
+							<div class="col-6">
+
+								<div class="row">
+								
+									<div class="form-group row">
+
+										<label for="inlineFormInputConceptName" class="col-md-5 ">Nombre del concepto</label>
+
+										<div class="col-md-7">
+
+											<select class="form-control form-control-sm" 
+												name="nameConcepto"
+												ng-options="optionConcepto as optionConcepto.Name for optionConcepto in pro.catalogoConceptos"
+												ng-model="pro.asignarPromocion.conceptoPromocion"
+												ng-change="pro.tipoConcepto(pro.asignarPromocion.conceptoPromocion)"
+												ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"
+												required=""/>
+
+											<div ng-messages="addPromotionForm.nameConcepto.$error">
+												<div ng-message="required" class="requiredInput">Requerido*</div>
+											</div>
+											
+										</div>
+
+									</div>
+									
+								</div>
+
+							</div>
+
+							<div class="col-6">
+								
+								<div class="form-group ">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputConceptFijo" class="col-sm-12 ">
+											<input type="checkbox" 
+											name="conceptoFijo" 
+											ng-model="pro.asignarPromocion.conceptoFijo"
+											ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''">  Concepto fijo
+										</label>
+
+									</div>
+
+								</div>										  	
+
+								<div class="form-group ">	
+
+									<div class="col-12">							    	
+
+											<label for="inlineFormInputConceptPagoUnico" class="col-sm-12">
+												<input type="checkbox" 
+												name="pagoUnico" 
+												ng-model="pro.asignarPromocion.pagoUnico"
+												ng-change="pro.tipoPagoUnico()"
+												ng-disabled="pro.asignarPromocion.cantidadPagosOE || pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''">  Pago Único
+											</label>
+
+									</div>
+
+								</div>
+
+								<div class="form-group ">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputConceptPagoDiferido" class="col-sm-12">
+											<input type="checkbox" 
+											name="pagoDiferido" 
+											ng-model="pro.asignarPromocion.pagoDiferido"
+											ng-change="pro.tipoPagoDiferido()"
+											ng-disabled="pro.asignarPromocion.cantidadPagosOE || pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''">  Pago Diferido
+										</label>
+
+									</div>
+
+								</div>	
+
+								<div class="form-group ">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputConceptPromoCero" class="col-sm-12">
+											<input type="checkbox" 
+											name="promocion0" 
+											ng-model="pro.asignarPromocion.promocionCero"
+											ng-change=""
+											ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''">  Requiere Promoción Cero
+										</label>
+
+									</div>
+
+								</div>
+
+								<div class="form-group" ng-if="pro.colegiaturaInscripcion">
+
+									<div class="col-12">
+
+										<label for="inlineFormInputConceptPagoDiferido" class="col-sm-12">
+											<input type="checkbox" 
+											name="cantidadPagosOE" 
+											ng-model="pro.asignarPromocion.cantidadPagosOE"
+											ng-change="pro.pagosOEConcepto()"
+											ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''">  Seleccionar Cantidad de Pagos de OE
+										</label>
+
+									</div>
+
+								</div>	
+								
+							</div>
+
+							</div>
+
+							<div class="row rowPromotion">
+
+								<div class="col-6">
+									
+								<div class="form-group row">
+
+									<label for="inlineFormInputConceptDescription" class="col-sm-5">Descripción comercial</label>
+
+									<div class="col-sm-7">	
+
+										<textarea class="form-control form-control-sm" 
+										name="descripcionComercial"
+										placeholder="..." 
+										rows="5" 
+										cols="50" 
+										ng-model="pro.asignarPromocion.descripcionComercial" 
+										ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"
+										required="true"></textarea>
+
+										<!-- <div ng-messages="addPromotionForm.descripcionComercial.$error">
+												<div ng-message="required" class="requiredInput">Requerido*</div>
+										</div> -->
+										
+									</div>
+
+								</div>										  	
+
+								</div>
+
+								<div class="col-6">
+									
+
+									<div class="form-group row">
+
+									<label for="inlineFormInputConceptCantidadPagos" class="col-md-5">Cantidad de Pagos</label>
+
+									<div class="col-md-7">
+
+											<input type="text" 
+											class="slds-input" 
+											name="cantidadPagos" 
+											ng-model="pro.asignarPromocion.cantidadPagos" 
+											ctc-format-number="currency" 
+											ctc-min-number="1" 
+											ctc-max-number="100" 
+											ctc-field="{precision:12,scale:0,type:'number', decimalsView:0}"
+											ng-disabled="pro.asignarPromocion.cantidadPagosOE || pro.asignarPromocion.NOEditable || pro.asignarPromocion.pagoUnico || pro.colegiaturaInscripcion || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"/>
+											
+										<div ng-messages="addPromotionForm.cantidadPagos.$error">
+												<div ng-message="required" class="requiredInput">Requerido*</div>
+										</div> 
+										
+									</div>
+
+								</div>
+							<div ng-hide="pro.asignarPromocion.pagoDiferido">
+								<div class="form-group row" ng-if="!pro.colegiaturaInscripcion">
+
+									<label for="inlineFormInputConceptName" class="col-md-5 ">% Descuento</label>
+
+									<div class="col-md-7">
+
+											<input type="text" 
+											class="slds-input" 
+											name="descuentoConcepto" 
+											ng-model="pro.asignarPromocion.descuentoConcepto" 
+											ctc-format-number="currency" 
+											ctc-min-number="0" 
+											ctc-max-number="100" 
+											ctc-field="{precision:12,scale:0,type:'percent', decimalsView:0}"
+											ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"
+											required="" />
+
+										<div ng-messages="addPromotionForm.descuentoConcepto.$error">
+												<div ng-message="required" class="requiredInput">Requerido*</div>
+										</div> 
+										
+									</div>
+
+								</div>
+							
+								<div class="form-group row" ng-if="!pro.colegiaturaInscripcion">
+
+									<label for="inlineFormInputConceptName" class="col-md-5">Importe de Concepto</label>
+
+									<div class="col-md-7">
+										
+										<input type="text" 
+										class="slds-input" 
+										name="importeConcepto" 
+										ng-model="pro.asignarPromocion.importeConcepto" 
+										ctc-format-number="currency" 
+										ctc-min-number="0" 
+										ctc-field="{precision:12,scale:2,type:'currency', decimalsView:2}"
+										ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"
+										required="" />
+
+										<div ng-messages="addPromotionForm.importeConcepto.$error">
+											<!--<div ng-message="required" class="requiredInput">Requerido*</div>-->
+										</div> 
+									
+									</div>
+
+								</div>
+
+								
+							</div>
+							
+							<div ng-show="pro.asignarPromocion.pagoDiferido">
+								<div class="form-group row">
+
+									<label for="inlineFormInputConceptName" class="col-md-5">Periodicidad</label>
+
+									<div class="col-md-7">
+										
+										<select id="inlineFormInputPeriodicidad" 
+																	class="form-control form-control-sm" 
+																	style="width: 86%;" 
+																	name="periodicidadPromocion"
+																		ng-options="optionPeriodicidad as optionPeriodicidad.Name for optionPeriodicidad in pro.periodicidadList"
+																		ng-model="pro.asignarPromocion.periodicidad" 
+																		ng-change="" 
+																		ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"
+																		required=""/>
+
+										<div ng-messages="addPromotionForm.periodicidadList.$error">
+											<!--<div ng-message="required" class="requiredInput">Requerido*</div>-->
+										</div> 
+									
+									</div>
+
+								</div>
+							</div>
+								</div>
+								
+							</div>
+						<!--END First row Nombre Promocion & Aplica con otras promociones -->		    	
+					</div> 
+					<!--END Conceptos a Aplicar Section -->
+					<!--END Third Section -->
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" 
+							class="btn btn-warning" 
+							ng-click="pro.inactivatePromotion(pro.asignarPromocion.Id,'Inactivo')" 
+							ng-if="pro.promocionCreada.status == true && pro.asignarPromocion.estatus == 'Activo'">Inactivar</button>
+
+							<button type="button" 
+							class="btn btn-success" 
+							ng-click="pro.inactivatePromotion(pro.asignarPromocion.Id,'Activo')" 
+							ng-if="pro.promocionCreada.status == true && pro.asignarPromocion.estatus == 'Inactivo'">Activar</button>
+
+							<button type="button" 
+							class="btn btn-success" 
+							ng-click="pro.saveNewPromotionModal(pro.asignarPromocion,pro.filterAddPromotion,'nueva')" 
+							ng-if="pro.promocionCreada.status == false"
+							ng-disabled="pro.asignarPromocion.isGranted">Guardar</button>
+
+							<button type="button" 
+							class="btn btn-primary"
+							ng-click="pro.saveNewPromotionModal(pro.asignarPromocion,pro.filterAddPromotion,'aprobación')" 
+							ng-if="pro.promocionCreada.status == true "
+							ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted">Guardar y Enviar a Aprobación</button>
+
+							<button type="button" 
+							class="btn btn-success"  
+							ng-click="pro.saveNewPromotionModal(pro.asignarPromocion,pro.filterAddPromotion,'editable')"
+							ng-if="pro.promocionCreada.status == true"
+							ng-disabled="pro.asignarPromocion.isGranted">Guardar</button>
+
+							<button type="button" 
+							class="btn btn-danger" 
+							ng-click="pro.closeNewPromotionModal()">Cerrar</button>
+
+					</div> 
+
+				</form>       
+		<!-- END ********** /Add Promotion ********** -->
+	</script>
+</apex:component>
