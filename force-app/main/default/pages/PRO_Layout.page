@@ -3393,7 +3393,7 @@
 
 						if( promotion.NombreConcepto__r
 						&& ( promotion.NombreConcepto__r.Name == 'Colegiatura' 
-						|| promotion.NombreConcepto__r.Name == 'Reinscripción' ) ){
+						|| promotion.NombreConcepto__r.Name == 'Reinscripción' ) || promotion.SeleccionarCantidadPagosOE__c){
 
 							vm.colegiaturaInscripcion = true;
 							vm.asignarPromocion.cantidadPagosOE = ( promotion.SeleccionarCantidadPagosOE__c  ) ? promotion.SeleccionarCantidadPagosOE__c : false;

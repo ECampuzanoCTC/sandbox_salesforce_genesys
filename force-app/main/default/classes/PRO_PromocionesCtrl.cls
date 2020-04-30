@@ -905,9 +905,8 @@ public with sharing class PRO_PromocionesCtrl {
             if(pC.size() > 0 && pC != null){
                 for(ConfiguradorPromocion__c cP : pC){
 
-                    if( (catalogo.Name == 'Colegiatura' || catalogo.Name == 'Reinscripción') 
-                    && promocion.SeleccionarCantidadPagosOE__c 
-                    && promocion.SeleccionarCantidadPagosOE__c == true ){
+                    if( ((catalogo.Name == 'Colegiatura' || catalogo.Name == 'Reinscripción') && promocion.SeleccionarCantidadPagosOE__c == true)
+					|| promocion.SeleccionarCantidadPagosOE__c == true ){
                         System.debug('upsertPromotionAndConfigurator::EsColegiaturaInscripcion1');
                         if( !periodos.contains(cP.Periodo__c) ){
                             periodos.add(cP.Periodo__c);
@@ -941,8 +940,8 @@ public with sharing class PRO_PromocionesCtrl {
             }else{
                 for(ConfiguradorPromocion__c cP : jsonConfigurator){
 
-                    if( promocion.SeleccionarCantidadPagosOE__c 
-                    && promocion.SeleccionarCantidadPagosOE__c == true ){
+                    if( ((catalogo.Name == 'Colegiatura' || catalogo.Name == 'Reinscripción') && promocion.SeleccionarCantidadPagosOE__c == true)
+					|| promocion.SeleccionarCantidadPagosOE__c == true ){
                         System.debug('upsertPromotionAndConfigurator::EsColegiaturaInscripcion1');
                         if( !periodos.contains(cP.Periodo__c) ){
                             periodos.add(cP.Periodo__c);
@@ -978,8 +977,8 @@ public with sharing class PRO_PromocionesCtrl {
 
 
 			
-			if(    promocion.SeleccionarCantidadPagosOE__c 
-			&& promocion.SeleccionarCantidadPagosOE__c == true ){
+			/* if(((catalogo.Name == 'Colegiatura' || catalogo.Name == 'Reinscripción') && promocion.SeleccionarCantidadPagosOE__c == true)
+			|| promocion.SeleccionarCantidadPagosOE__c == true ){
 				System.debug('upsertPromotionAndConfigurator::EsColegiaturaInscripcion2');
                 System.debug('$$$$ programas' + programas);
 				List<OfertaEducativa__c> ofertaE = [select Periodo__c, Modalidad__c, Plantel__c, Nivel__c, Programa__c, NumeroColegiaturas__c, NumeroInscripciones__c from OfertaEducativa__c WHERE Periodo__c IN: periodos AND Modalidad__c IN: modalidades AND Plantel__c IN: planteles AND Nivel__c IN: niveles AND Programa__c IN: programas];
@@ -995,6 +994,8 @@ public with sharing class PRO_PromocionesCtrl {
 						mapOfertaEducativa.put(keymap,oe);
 					}
 				}
+
+				
 				System.debug('upsertPromotionAndConfigurator::mapOfertaEducativa' + mapOfertaEducativa);
                 System.debug('$$$$ confPromocion' + confPromocion);
 				if( ofertaE != null && ofertaE.size() > 0){
@@ -1011,7 +1012,55 @@ public with sharing class PRO_PromocionesCtrl {
 								if(mapOfertaEducativa.containsKey(keyConfigurado)){
 									confPromo.CantidadPago__c = mapOfertaEducativa.get(keyConfigurado).NumeroInscripciones__c;
 								}
-							}*/
+							}*
+
+					}
+					
+				}
+
+			}  */
+			if(   ((catalogo.Name == 'Colegiatura' || catalogo.Name == 'Reinscripción') && promocion.SeleccionarCantidadPagosOE__c == true)
+				|| promocion.SeleccionarCantidadPagosOE__c == true ){
+				System.debug('upsertPromotionAndConfigurator::EsColegiaturaInscripcion2');
+				List<OfertaEducativa__c> ofertaE = [select Periodo__c, Modalidad__c, Plantel__c, Nivel__c, Programa__c, NumeroColegiaturas__c, NumeroInscripciones__c from OfertaEducativa__c WHERE Periodo__c IN: periodos AND Modalidad__c IN: modalidades AND Plantel__c IN: planteles AND Nivel__c IN: niveles AND Programa__c IN: programas];
+
+				promocion.PagoDiferido__c = false;
+				promocion.PagoUnico__c = false;
+				
+				map<String,OfertaEducativa__c> mapOfertaEducativa = new map<String,OfertaEducativa__c>();
+				for(OfertaEducativa__c oe : ofertaE){
+					String keymap = '' + oe.Periodo__c +oe.Modalidad__c + oe.Plantel__c +  oe.Nivel__c + oe.Programa__c;
+					if(!mapOfertaEducativa.containsKey(keymap)){
+						mapOfertaEducativa.put(keymap,oe);
+					}
+				}
+				System.debug('upsertPromotionAndConfigurator::mapOfertaEducativa' + mapOfertaEducativa);
+				if( ofertaE != null && ofertaE.size() > 0){
+
+					for( ConfiguradorPromocion__c confPromo : confPromocion ){
+						string keyConfigurado = '' + confPromo.Periodo__c +confPromo.Modalidad__c + confPromo.Plantel__c +  confPromo.Nivel__c + confPromo.Programa__c;
+							if(catalogo.Name == 'Colegiatura'){
+								if(mapOfertaEducativa.containsKey(keyConfigurado)){
+									confPromo.CantidadPago__c = mapOfertaEducativa.get(keyConfigurado).NumeroColegiaturas__c;
+								}
+							}
+							else if(catalogo.Name == 'Reinscripción'){
+								if(mapOfertaEducativa.containsKey(keyConfigurado)){
+									confPromo.CantidadPago__c = mapOfertaEducativa.get(keyConfigurado).NumeroInscripciones__c;
+								}
+							}
+							else{
+								if(catalogo.HeredarCantidadPagosColegiaturaOE__c == true){
+									if(mapOfertaEducativa.containsKey(keyConfigurado)){
+										confPromo.CantidadPago__c = mapOfertaEducativa.get(keyConfigurado).NumeroColegiaturas__c;
+									}
+								}
+								if(catalogo.HeredarCantidadPagosInscripcionOE__c == true){
+									if(mapOfertaEducativa.containsKey(keyConfigurado)){
+										confPromo.CantidadPago__c = mapOfertaEducativa.get(keyConfigurado).NumeroInscripciones__c;
+									}
+								}
+							}
 
 					}
 					
