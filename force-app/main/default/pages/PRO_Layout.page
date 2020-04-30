@@ -1311,6 +1311,10 @@
 						vm.tipoPagoDiferido = tipoPagoDiferido;
 						vm.pagosOEConcepto = pagosOEConcepto;
 						vm.verificarFechaFin = verificarFechaFin;
+
+
+
+						vm.muestra_seleccionar_pagos_oe = false;
 					/**END Initialization of methods to load Data */
 
 					/*START Init Functions*/
@@ -1625,7 +1629,7 @@
 
 						var deferred = $q.defer();
 
-						$timeout(function(){ 
+						//$timeout(function(){ 
 
 							vm.filterAddPromotion.filterListModality = [];
 							vm.filterAddPromotion.filterListPlantel = [];
@@ -1739,7 +1743,7 @@
 
 							deferred.resolve(vm.filterAddPromotion);
 
-						});
+						//});
 
 						
 						return deferred.promise;
@@ -3385,7 +3389,7 @@
 
                         //vm.asignarPromocion.periodicidad = (promotion.Periodicidad__c) ? promotion.Periodicidad__c : null;
 
-						vm.asignarPromocion.cantidadPagos = (promotion.CantidadPago__c) ? promotion.CantidadPago__c : 0;
+						vm.asignarPromocion.cantidadPagos = (promotion.CantidadPago__c) ? promotion.CantidadPago__c : undefined;
 
 						vm.asignarPromocion.importeConcepto = (promotion.ImporteConcepto__c) ? promotion.ImporteConcepto__c : 0;
 
@@ -3394,7 +3398,7 @@
 						if( promotion.NombreConcepto__r
 						&& ( promotion.NombreConcepto__r.Name == 'Colegiatura' 
 						|| promotion.NombreConcepto__r.Name == 'Reinscripción' ) || promotion.SeleccionarCantidadPagosOE__c){
-
+							proAgP.muestra_seleccionar_pagos_oe = true;
 							vm.colegiaturaInscripcion = true;
 							vm.asignarPromocion.cantidadPagosOE = ( promotion.SeleccionarCantidadPagosOE__c  ) ? promotion.SeleccionarCantidadPagosOE__c : false;
 						}
@@ -3909,6 +3913,7 @@
 						console.log('tipoConcepto::filterAddPromotion::',vm.filterAddPromotion);
 						if (vm.filterAddPromotion && vm.filterAddPromotion.filterProgram && vm.filterAddPromotion.filterProgram.length == 1 && (concepto.HeredarCantidadPagosColegiaturaOE__c == true || concepto.HeredarCantidadPagosInscripcionOE__c == true)) {
 							console.log('tipoConcepto::entraif::');
+							vm.muestra_seleccionar_pagos_oe = true;
 							vm.colegiaturaInscripcion = true;
 							vm.asignarPromocion.cantidadPagosOE = true;
 							vm.asignarPromocion.pagoDiferido = true;
@@ -3919,6 +3924,7 @@
 							//getConceptos(vm.filterAddPromotion.filterProgram[0].OfertaEducativa, concepto);//RJP
 						}else{
 							vm.colegiaturaInscripcion = false;
+							vm.muestra_seleccionar_pagos_oe = false;
 							vm.asignarPromocion.conceptoPromocion;
 							vm.asignarPromocion.cantidadPagosOE = false;
 							// vm.asignarPromocion.cantidadPagos = null;
@@ -3950,7 +3956,7 @@
 					}
 
 					function pagosOEConcepto(){
-						if(vm.asignarPromocion.cantidadPagosOE == true){
+						/*if(vm.asignarPromocion.cantidadPagosOE == true){
 							if( vm.asignarPromocion.pagoUnico == true ) {
 								vm.asignarPromocion.pagoUnico = false;
 							}
@@ -3958,18 +3964,35 @@
 								vm.asignarPromocion.pagoDiferido = false;
 							}
 							vm.asignarPromocion.cantidadPagos = 0;
-						}
+						}*/
+						vm.colegiaturaInscripcion = vm.colegiaturaInscripcion == true ? false : !vm.colegiaturaInscripcion;
+						//proAgP.asignarPromocion.cantidadPagosOE = proAgP.asignarPromocion.cantidadPagosOE ? false: !proAgP.asignarPromocion.cantidadPagosOE;
+						if (!vm.estado_anterior_pagos_oe)
+							vm.estado_anterior_pagos_oe = {
+								cantidadPagos: vm.asignarPromocion.cantidadPagos
+							}
+						
+						vm.asignarPromocion.cantidadPagos = vm.estado_anterior_pagos_oe.cantidadPagos
 					};
 
 					function tipoPagoUnico(){
-						if( vm.asignarPromocion.pagoUnico == true ){
+						/* if( vm.asignarPromocion.pagoUnico == true ){
 
 							vm.asignarPromocion.cantidadPagos = '1';
 
 							if( vm.asignarPromocion.pagoDiferido == true ){
 								vm.asignarPromocion.pagoDiferido = false;
 							}
+						} */
+
+						
+						if(!vm.asignarPromocion.pagoUnico){
+							vm.asignarPromocion.cantidadPagos = undefined;
+							return;
 						}
+
+						vm.asignarPromocion.cantidadPagos = '1';
+						vm.asignarPromocion.pagoDiferido = false;
 					};
 
 					function tipoPagoDiferido(){

@@ -617,7 +617,7 @@
 
 								</div>
 
-								<div class="form-group" ng-if="pro.colegiaturaInscripcion">
+								<div class="form-group" ng-if="pro.muestra_seleccionar_pagos_oe">
 
 									<div class="col-12">
 
@@ -683,8 +683,7 @@
 											ctc-min-number="1" 
 											ctc-max-number="100" 
 											ctc-field="{precision:12,scale:0,type:'number', decimalsView:0}"
-											ng-disabled="pro.asignarPromocion.cantidadPagosOE || pro.asignarPromocion.NOEditable || pro.asignarPromocion.pagoUnico || pro.colegiaturaInscripcion || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"/>
-											
+											ng-disabled="pro.asignarPromocion.cantidadPagosOE || pro.asignarPromocion.NOEditable || pro.asignarPromocion.pagoUnico || pro.colegiaturaInscripcion || pro.asignarPromocion.isGranted"/>
 										<div ng-messages="addPromotionForm.cantidadPagos.$error">
 												<div ng-message="required" class="requiredInput">Requerido*</div>
 										</div> 
@@ -745,7 +744,7 @@
 								
 							</div>
 							
-							<div ng-show="pro.asignarPromocion.pagoDiferido">
+							<div ng-if="pro.asignarPromocion.pagoDiferido">
 								<div class="form-group row">
 
 									<label for="inlineFormInputConceptName" class="col-md-5">Periodicidad</label>
@@ -753,14 +752,14 @@
 									<div class="col-md-7">
 										
 										<select id="inlineFormInputPeriodicidad" 
-																	class="form-control form-control-sm" 
-																	style="width: 86%;" 
-																	name="periodicidadPromocion"
-																		ng-options="optionPeriodicidad as optionPeriodicidad.Name for optionPeriodicidad in pro.periodicidadList"
-																		ng-model="pro.asignarPromocion.periodicidad" 
-																		ng-change="" 
-																		ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"
-																		required=""/>
+											class="form-control form-control-sm" 
+											style="width: 86%;" 
+											name="periodicidadPromocion"
+												ng-options="optionPeriodicidad as optionPeriodicidad.Name for optionPeriodicidad in pro.periodicidadList"
+												ng-model="pro.asignarPromocion.periodicidad" 
+												ng-change="" 
+												ng-disabled="pro.asignarPromocion.NOEditable || pro.asignarPromocion.isGranted || pro.asignarPromocion.Id !== ''"
+												required=""/>
 
 										<div ng-messages="addPromotionForm.periodicidadList.$error">
 											<!--<div ng-message="required" class="requiredInput">Requerido*</div>-->

@@ -894,7 +894,7 @@ public with sharing class PRO_PromocionesCtrl {
 
 			promocion = (Promocion__c)JSON.deserialize(jsonPromotion,Promocion__c.class);
 			System.debug('upsertPromotionAndConfigurator || Promocion__c: ' + promocion);
-			Catalogo__c catalogo =  [SELECT Id,Name FROM Catalogo__c WHERE Id =: promocion.NombreConcepto__c];
+			Catalogo__c catalogo =  [SELECT Id, Name, HeredarCantidadPagosColegiaturaOE__c, HeredarCantidadPagosInscripcionOE__c  FROM Catalogo__c WHERE Id =: promocion.NombreConcepto__c];
 			System.debug('upsertPromotionAndConfigurator || catalogo: ' + catalogo);
             //System.debug('upsertPromotionAndConfigurator || Promocion.Id :' + promocion.Id);
 			//update promocion;
@@ -1131,6 +1131,7 @@ public with sharing class PRO_PromocionesCtrl {
 
 			Database.rollback(sp);
 
+			//throw ex;
 			String error = 'Exception Promociones-upsertPromotionAndConfigurator linea:'+ex.getLineNumber()+ ' motivo:'+ex.getCause()+ '/'+ ex.getMessage();
 
 			mapResponse.put('state', 'Exception');
