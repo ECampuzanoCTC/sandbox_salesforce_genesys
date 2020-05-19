@@ -3398,7 +3398,7 @@
 						if( promotion.NombreConcepto__r
 						&& ( promotion.NombreConcepto__r.Name == 'Colegiatura' 
 						|| promotion.NombreConcepto__r.Name == 'Reinscripción' ) || promotion.SeleccionarCantidadPagosOE__c){
-							proAgP.muestra_seleccionar_pagos_oe = true;
+							vm.muestra_seleccionar_pagos_oe = true;
 							vm.colegiaturaInscripcion = true;
 							vm.asignarPromocion.cantidadPagosOE = ( promotion.SeleccionarCantidadPagosOE__c  ) ? promotion.SeleccionarCantidadPagosOE__c : false;
 						}
@@ -3461,7 +3461,7 @@
 						console.log(FUNC_NAME + 'periodoFechaInicio:', periodoFechaInicio);
 						console.log(FUNC_NAME + 'promocionFechaFin:', promocionFechaFin);
 						console.log(FUNC_NAME + 'periodoFechaFin:', periodoFechaFin);
-						if (promocionFechaInicio < periodoFechaInicio) {
+						if (promocionFechaFin < periodoFechaInicio) {
 							RequestFactory.toastMessageWarning('La Fecha Inicio de Vigencia de la promoción debe ser mayor o igual a la fecha de inicio del Periodo seleccionado');
 							banderaExito = false;
 						} else if (promocionFechaInicio >= periodoFechaFin) {
@@ -3911,7 +3911,7 @@
 					function tipoConcepto(concepto){
 						console.log('tipoConcepto::concepto::',concepto);
 						console.log('tipoConcepto::filterAddPromotion::',vm.filterAddPromotion);
-						if (vm.filterAddPromotion && vm.filterAddPromotion.filterProgram && vm.filterAddPromotion.filterProgram.length == 1 && (concepto.HeredarCantidadPagosColegiaturaOE__c == true || concepto.HeredarCantidadPagosInscripcionOE__c == true)) {
+						if (vm.filterAddPromotion && vm.filterAddPromotion.filterProgram && (concepto.HeredarCantidadPagosColegiaturaOE__c == true || concepto.HeredarCantidadPagosInscripcionOE__c == true)) {
 							console.log('tipoConcepto::entraif::');
 							vm.muestra_seleccionar_pagos_oe = true;
 							vm.colegiaturaInscripcion = true;
